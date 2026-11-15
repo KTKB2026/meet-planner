@@ -1,7 +1,7 @@
 // Saves the app on the phone so it opens with no signal.
 // Network first: with signal you always get the newest version.
 // Bump the CACHE name on every deploy.
-var CACHE = "meet-planner-v1";
+var CACHE = "meet-planner-v2";
 var FILES = ["./", "index.html", "data/config.js", "data/athletes.js"];
 
 self.addEventListener("install", function (e) {

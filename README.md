@@ -108,8 +108,22 @@ Save and reload.
 - To let another lift have a second list, add `others` to that lift in
   `config.js` (see Comp bench) and add a list with the same key to `log`.
 - Estimated max is Epley: load × (1 + reps / 30). Singles count as the load.
-- Meet day mode: mark each attempt Good, fast / Good, grinder / Miss. The next
-  attempt highlights a suggestion. Fast make: Moderate or Hard. Grinder: Safe.
-  Miss: Repeat or Safe. Changing an attempt's weight clears its mark.
+- Meet day mode (button at the top): switches to a dark card built like
+  Susan's Worlds card. Tap a lifter's name at the top to switch lifters. Tap
+  "Plan view" to go back. It has:
+  - Session clock and time since the last warm-up set.
+  - Lifters-till-up counter that tells you when each warm-up is due.
+  - Live board: paste the LiftingCast board link once.
+  - Flight plan: fills in counts and estimated opener times.
+  - Attempts: type any weight, or tap one of the small Safe / Moderate / Hard
+    numbers under it. Tap the pill for good, miss, or clear.
+  - Notes box for each lift. The same notes show in the plan view and on the
+    print sheet.
+  - Warm-up flow, subtotals between lifts, and the chase calc.
+- Meet day attempts start from the plan picks. To bake set attempts for a
+  lifter, add `attempts: { squat: [a, b, c], bench: [a, b, c], deadlift:
+  [a, b, c] }` to their block in `athletes.js`. "from plan" on a lift reloads
+  them.
+- Meet day pacing numbers are in `config.js` under `meetDay`.
 - Print handler sheet: one page with attempts and warm-ups. Flags and the
   athlete's notes are left off the sheet on purpose.
