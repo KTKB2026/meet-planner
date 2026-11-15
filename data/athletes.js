@@ -17,12 +17,16 @@ window.ATHLETES = [
     id: "madeline",
     name: "Madeline",
 
+    // Session, flight, platform, class, and flight sizes are from LiftingCast (Nov 15).
     meet: {
       name: "MA State Championships",
       date: "2026-11-15",
-      federation: "",
-      weightClass: "",
-      weighIn: ""
+      federation: "USAPL",
+      weightClass: "75 kg",
+      weighIn: "",
+      session: "Session 3, Flight A, Platform 1 (Black)",
+      boardUrl: "https://liftingcast.com/meets/mseaub8zayiu/platforms/pgc6ztb9zgvu/board",
+      flightPlan: { a: 0, b: 13, c: 10 }
     },
 
     historyStart: "2026-08-04",
@@ -121,20 +125,23 @@ window.ATHLETES = [
     id: "aiden",
     name: "Aiden",
 
-    // Next meet not set yet.
+    // Session, flight, platform, class, and flight sizes are from LiftingCast (Nov 15).
     meet: {
-      name: "",
-      date: "",
-      federation: "",
-      weightClass: "",
-      weighIn: ""
+      name: "MA State Championships",
+      date: "2026-11-15",
+      federation: "USAPL",
+      weightClass: "125 kg",
+      weighIn: "",
+      session: "Session 4, Flight B, Platform 2 (Red)",
+      boardUrl: "https://liftingcast.com/meets/mseaub8zayiu/platforms/p8b7rakmqnjo/board",
+      flightPlan: { a: 9, b: 11, c: 0 }
     },
 
     // Day after his last meet before this log.
     historyStart: "2026-08-23",
     historyNote: "",
 
-    // From Nov 9, before MA State. Review once the Nov 14 results are in.
+    // From Nov 9. His attempt sheet below runs above these.
     trainingMaxes: {
       squat:    { kg: 255,   approved: true, approvedOn: "2026-11-09", reason: "255×1 on Nov 2" },
       bench:    { kg: 177.5, approved: true, approvedOn: "2026-11-09", reason: "Best meet bench, Aug 22. 170×1 on Oct 27" },
