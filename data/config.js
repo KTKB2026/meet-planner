@@ -20,11 +20,11 @@ window.CONFIG = {
 
   // Lifts shown on the page, in order. "key" matches the keys in athletes.js.
   lifts: [
-    { key: "squat",    name: "Squat" },
+    { key: "squat",    name: "Squat", short: "SQ" },
     // "others" are related lists logged under a different exercise name.
     // Sets can be moved between a lift and its other list on the page.
-    { key: "bench",    name: "Comp bench", others: [{ key: "tngBench", name: "Touch-and-go bench" }] },
-    { key: "deadlift", name: "Deadlift" }
+    { key: "bench",    name: "Comp bench", short: "BP", others: [{ key: "tngBench", name: "Touch-and-go bench" }] },
+    { key: "deadlift", name: "Deadlift", short: "DL" }
   ],
 
   // Warm-ups, as a percent of the selected opener.
@@ -64,6 +64,14 @@ window.CONFIG = {
   },
 
   warmupTimingNote: "Finish last warm-up roughly 6 to 10 lifters before you're called.",
+
+  // Meet day mode pacing. "Out" = lifters left before the opener.
+  // Last warm-up is due at lastWarmupOut, each earlier set warmupSpacing sooner.
+  meetDay: {
+    lastWarmupOut: 8,
+    warmupSpacing: 5,
+    minutesPerAttempt: 1
+  },
 
   // Plate math. Collars count toward the weight on the bar.
   // If the warm-up room uses spring clips, set collarKgEach to 0.

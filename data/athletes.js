@@ -165,6 +165,14 @@ window.ATHLETES = [
       ]
     },
 
+    // Aiden's attempt sheet (Safe / Normal / Hard), from Kyle, Nov 15.
+    // Rows: opener, 2nd, 3rd. These replace the percentage options for him.
+    attemptSheet: {
+      squat:    [[235, 240, 245], [250, 255, 260], [260, 265, 270]],
+      bench:    [[155, 160, 165], [165, 170, 175], [175, 180, 185]],
+      deadlift: [[220, 225, 230], [235, 240, 245], [245, 255, 260]]
+    },
+
     flags: [],
 
     meetWeek: []

@@ -140,12 +140,207 @@
   .result.good { color: var(--ok); }
   .result.miss { color: var(--bad); }
 
+  /* notes per lift (plan view) */
+  .lnote-p { display: block; margin-top: 14px; font-size: 13px; font-weight: 600; }
+  .lnote-p textarea { display: block; width: 100%; margin-top: 4px; font: inherit; font-weight: 400; font-size: 16px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); resize: vertical; }
+  .btn.primary { background: var(--ink); border-color: var(--ink); color: #fff; font-weight: 600; }
+
+  /* ===== Meet day mode: dark card, modeled on the Worlds meet day card ===== */
+  #day { display: none; }
+  body.md { background: #0e1116; color: #e8ebef; }
+  body.md main { display: none; }
+  body.md #day {
+    --dink: #0e1116; --panel: #171c24; --panel2: #1f2630; --dline: #2c3540;
+    --text: #e8ebef; --dim: #8b95a3;
+    --c0: #e0a33c; --c1: #5fb4e6; --c2: #e0635a;
+    --good: #4cc38a; --warn: #e0a33c; --stop: #e0635a;
+    display: block; max-width: 560px; margin: 0 auto; padding: 14px 14px 60px;
+    font-size: 16px; line-height: 1.45; color: var(--text);
+  }
+  #day * { -webkit-tap-highlight-color: transparent; }
+  #day input, #day textarea { font-family: inherit; color: var(--text); background: transparent; border: none; outline: none; min-height: 0; padding: 0; border-radius: 0; }
+  #day input:focus, #day textarea:focus { background: rgba(255,255,255,.07); border-radius: 4px; }
+  #day button { font-family: inherit; }
+
+  #day .dtop { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+  #day .eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+  #day .chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  #day .achip { font-size: 13px; font-weight: 800; border-radius: 9px; padding: 8px 11px; border: 1px solid var(--dline); background: var(--panel2); color: var(--dim); cursor: pointer; }
+  #day .achip.on { background: var(--text); border-color: var(--text); color: var(--dink); }
+  #day .pbtn { font-size: 12px; font-weight: 700; border-radius: 9px; padding: 8px 10px; border: 1px dashed var(--dline); background: none; color: var(--dim); cursor: pointer; }
+  #day header { margin-bottom: 12px; }
+  #day h1 { font-size: 28px; font-weight: 800; letter-spacing: -.02em; line-height: 1.05; margin: 0; }
+  #day .sub { color: var(--dim); font-size: 13px; margin-top: 5px; }
+  #day .dhint { font-size: 11px; color: var(--dim); text-align: center; margin: 0 0 14px; }
+
+  #day .stick { position: sticky; top: 8px; z-index: 50; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(0,0,0,.45); border-radius: 12px; }
+  #day .clock { background: var(--panel); border: 1px solid var(--dline); border-radius: 12px 12px 0 0; display: flex; align-items: center; padding: 8px 10px; user-select: none; }
+  #day .ck { flex: 1; padding: 2px 6px; }
+  #day .ck + .ck { border-left: 1px solid var(--dline); }
+  #day .cl-lab { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); line-height: 1.3; display: flex; justify-content: space-between; align-items: center; }
+  #day .cl-time { font-size: 30px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.02em; line-height: 1.1; }
+  #day .cl-hint { font-size: 10px; color: var(--dim); }
+  #day #d-sess { cursor: pointer; }
+  #day #d-sess.run .cl-time { color: var(--good); }
+  #day #d-last.slow .cl-time, #day #d-last.slow .cl-hint { color: var(--warn); }
+  #day .crst { background: var(--panel2); border: 1px solid var(--dline); color: var(--dim); font-size: 11px; font-weight: 700; border-radius: 7px; padding: 2px 7px; cursor: pointer; }
+
+  #day .ctr { background: var(--panel); border: 1px solid var(--dline); border-top: none; border-radius: 0 0 12px 12px; padding: 8px 10px 10px; }
+  #day .ctr-top { display: flex; align-items: center; gap: 6px; }
+  #day .lchips { display: flex; gap: 4px; }
+  #day .lchip { font-size: 11px; font-weight: 800; letter-spacing: .06em; border-radius: 7px; padding: 6px 7px; border: 1px solid var(--dline); background: var(--panel2); color: var(--dim); cursor: pointer; }
+  #day .lchip.on.l0 { color: var(--dink); background: var(--c0); border-color: var(--c0); }
+  #day .lchip.on.l1 { color: var(--dink); background: var(--c1); border-color: var(--c1); }
+  #day .lchip.on.l2 { color: var(--dink); background: var(--c2); border-color: var(--c2); }
+  #day .cbtn { font-size: 15px; font-weight: 800; background: var(--panel2); border: 1px solid var(--dline); color: var(--text); border-radius: 9px; padding: 7px 11px; cursor: pointer; }
+  #day .cbtn.minus { margin-left: auto; padding: 9px 14px; font-size: 17px; }
+  #day .cbtn.plus { font-size: 12px; padding: 6px 8px; color: var(--dim); }
+  #day #d-cnum { width: 52px; font-size: 22px; font-weight: 800; text-align: center; font-variant-numeric: tabular-nums; background: var(--panel2); border: 1px dashed var(--dim); border-radius: 9px; padding: 4px 0; }
+  #day #d-cnum.set { border: 1px solid var(--dline); }
+  #day .clab { font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); line-height: 1.1; }
+  #day .ctr-line { display: flex; align-items: stretch; gap: 6px; margin-top: 7px; }
+  #day .mini-minus { display: none; font-size: 15px; font-weight: 800; background: var(--panel2); border: 1px solid var(--dline); color: var(--text); border-radius: 8px; padding: 0 12px; cursor: pointer; }
+  #day .fold { font-size: 12px; background: var(--panel2); border: 1px solid var(--dline); color: var(--dim); border-radius: 8px; padding: 0 10px; cursor: pointer; }
+  #day .ctr.closed { padding-top: 6px; }
+  #day .ctr.closed .ctr-top { display: none; }
+  #day .ctr.closed .ctr-line { margin-top: 0; }
+  #day .ctr.closed .mini-minus { display: block; }
+  #day .take { flex: 1; font-size: 13px; font-weight: 600; text-align: center; padding: 6px 8px; border-radius: 8px; background: var(--panel2); color: var(--dim); }
+  #day .take.due { background: rgba(224,163,60,.16); color: var(--warn); }
+  #day .take.late { background: rgba(224,99,90,.16); color: var(--stop); }
+  #day .take.up { background: rgba(76,195,138,.16); color: var(--good); }
+
+  #day .board { background: var(--panel); border: 1px solid var(--dline); border-radius: 12px; margin-bottom: 14px; overflow: hidden; }
+  #day .board-bar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; }
+  #day .board-bar button { font-size: 13px; font-weight: 700; background: none; border: none; color: var(--text); cursor: pointer; padding: 0; flex: 1; text-align: left; }
+  #day .board-bar a { font-size: 11px; color: var(--dim); }
+  #day .board-url { padding: 0 14px 10px; }
+  #day .board-url input { width: 100%; font-size: 16px; background: var(--panel2); border: 1px solid var(--dline); border-radius: 7px; padding: 6px 8px; }
+  #day .board iframe { display: none; width: 100%; height: 72vh; border: 0; border-top: 1px solid var(--dline); background: #fff; }
+  #day .board.open iframe { display: block; }
+
+  #day .fp { background: var(--panel); border: 1px solid var(--dline); border-radius: 12px; padding: 10px 12px; margin-bottom: 14px; }
+  #day .fp-head { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; gap: 8px; }
+  #day .fp-sum { font-size: 12px; color: #c2c9d2; text-transform: none; letter-spacing: 0; margin-left: auto; font-variant-numeric: tabular-nums; }
+  #day .fp-body { margin-top: 8px; }
+  #day .fp.closed .fp-body { display: none; }
+  #day .fp:not(.closed) .fp-sum { display: none; }
+  #day .fp-in { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
+  #day .fp-in label { display: block; font-size: 9px; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); margin-bottom: 3px; text-align: center; }
+  #day .fp-in input { width: 100%; background: var(--panel2); border: 1px solid var(--dline); border-radius: 7px; font-size: 16px; font-weight: 700; text-align: center; padding: 6px 2px; font-variant-numeric: tabular-nums; color-scheme: dark; }
+  #day .fp-row { display: grid; grid-template-columns: 34px 1fr auto; gap: 8px; align-items: center; padding: 7px 0; border-top: 1px solid var(--dline); font-size: 13px; }
+  #day .lk { font-weight: 800; font-size: 11px; letter-spacing: .08em; }
+  #day .lk.l0 { color: var(--c0); } #day .lk.l1 { color: var(--c1); } #day .lk.l2 { color: var(--c2); }
+  #day .fp-row .tx { color: #c2c9d2; line-height: 1.3; }
+  #day .fp-row .tx b { color: var(--text); font-variant-numeric: tabular-nums; }
+  #day .fp-row button { font-size: 11px; font-weight: 700; background: var(--panel2); border: 1px solid var(--dline); color: var(--text); border-radius: 7px; padding: 6px 8px; cursor: pointer; white-space: nowrap; }
+  #day .fp-note { font-size: 11px; color: var(--dim); margin-top: 6px; }
+
+  #day .collar { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; color: var(--dim); margin: -4px 0 12px; }
+  #day .tog { width: 40px; height: 22px; border-radius: 11px; background: var(--panel2); border: 1px solid var(--dline); position: relative; cursor: pointer; }
+  #day .tog::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--dim); transition: left .15s; }
+  #day .tog.on { background: rgba(76,195,138,.25); border-color: var(--good); }
+  #day .tog.on::after { left: 20px; background: var(--good); }
+
+  #day .lift { background: var(--panel); border: 1px solid var(--dline); overflow: hidden; }
+  #day .lift.first { border-radius: 14px 14px 0 0; }
+  #day .lift.last { border-radius: 0 0 14px 14px; margin-bottom: 14px; }
+  #day .lift-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 12px 14px 8px; }
+  #day .lift-name { font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+  #day .lift.l0 .lift-name { color: var(--c0); } #day .lift.l1 .lift-name { color: var(--c1); } #day .lift.l2 .lift-name { color: var(--c2); }
+  #day .lift-ref { font-size: 11px; color: var(--dim); text-align: right; }
+  #day .mini { font-size: 10px; font-weight: 700; background: none; border: 1px solid var(--dline); color: var(--dim); border-radius: 6px; padding: 3px 6px; margin-left: 6px; cursor: pointer; }
+  #day .attempts { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--dline); }
+  #day .att { background: var(--panel2); padding: 10px 4px 8px; text-align: center; }
+  #day .att .lab { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+  #day .att input.kg { width: 100%; font-size: 27px; font-weight: 800; text-align: center; font-variant-numeric: tabular-nums; letter-spacing: -.02em; margin: 2px 0; padding: 2px 0; }
+  #day .att .plates { font-size: 10px; color: var(--dim); font-variant-numeric: tabular-nums; min-height: 13px; }
+  #day .att .opts { display: flex; justify-content: center; gap: 2px; margin-top: 5px; flex-wrap: wrap; }
+  #day .att .ochip { font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.03em; background: none; border: 1px solid var(--dline); color: var(--dim); border-radius: 5px; padding: 4px 2px; cursor: pointer; flex: 0 0 auto; min-height: 0; }
+  #day .att .ochip.on { color: var(--text); border-color: var(--dim); background: rgba(255,255,255,.06); }
+  #day .att .mark { font-size: 11px; font-weight: 700; margin: 6px 4px 0; padding: 7px 0; border-radius: 6px; border: 1px solid var(--dline); color: var(--dim); cursor: pointer; user-select: none; }
+  #day .att.good { background: rgba(76,195,138,.13); } #day .att.good .mark { color: var(--good); border-color: var(--good); }
+  #day .att.miss { background: rgba(224,99,90,.13); } #day .att.miss .mark { color: var(--stop); border-color: var(--stop); }
+  #day .lnote { padding: 8px 14px 10px; border-top: 1px solid var(--dline); }
+  #day .lnote label { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); display: block; margin-bottom: 4px; }
+  #day .lnote textarea { width: 100%; font-size: 16px; line-height: 1.35; color: #c2c9d2; background: var(--panel2); border-radius: 8px; padding: 7px 9px; resize: vertical; display: block; }
+  #day .final { padding: 0 14px 10px; font-size: 13px; color: #c2c9d2; }
+  #day .final b { color: var(--text); }
+
+  #day .strip { background: var(--panel2); border: 1px solid var(--dline); border-top: none; border-bottom: none; margin: 0 12px; padding: 10px 12px 12px; }
+  #day .strip-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; gap: 8px; }
+  #day .strip-title { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+  #day .strip-live { font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #day .strip-live small { font-size: 10px; font-weight: 600; color: var(--dim); letter-spacing: .08em; }
+  #day .scen { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  #day .scen .s { background: var(--dink); border: 1px solid var(--dline); border-radius: 8px; padding: 6px 4px; text-align: center; }
+  #day .scen .sl { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+  #day .scen .sv { font-size: 17px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  #day .scen .s.dead { opacity: .35; }
+
+  #day .wu { border-top: 1px solid var(--dline); }
+  #day .wu-toggle { width: 100%; background: none; border: none; color: var(--dim); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: 11px 14px; text-align: left; cursor: pointer; display: flex; justify-content: space-between; }
+  #day .wu-body { display: none; padding: 0 14px 12px; }
+  #day .wu.open .wu-body { display: block; }
+  #day .wu-calc { background: var(--dink); border: 1px solid var(--dline); border-radius: 10px; padding: 10px; margin-bottom: 10px; }
+  #day .wc-title { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-bottom: 8px; }
+  #day .wc-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  #day .wc-field label { display: block; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); margin-bottom: 3px; }
+  #day .wc-field input { width: 100%; background: var(--panel2); border: 1px solid var(--dline); border-radius: 7px; font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; padding: 6px; text-align: center; color-scheme: dark; }
+  #day .wc-out { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  #day .wc-opener { font-size: 13px; color: var(--dim); }
+  #day .wc-opener b { color: var(--text); font-size: 16px; font-variant-numeric: tabular-nums; }
+  #day .wu-calc button, #day .wu-btn { background: var(--panel2); border: 1px solid var(--dline); color: var(--text); font-size: 12px; font-weight: 700; border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+  #day .wu-cols, #day .wu-row { display: grid; grid-template-columns: 44px 38px 1fr 58px 40px 28px; gap: 6px; align-items: center; }
+  #day .wu-cols { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); padding: 4px 0 6px; }
+  #day .wu-row { padding: 6px 0; border-bottom: 1px solid var(--dline); font-size: 14px; }
+  #day .wu-row .n { color: var(--dim); font-size: 12px; font-variant-numeric: tabular-nums; cursor: pointer; }
+  #day .wu-row .n.stamped { color: var(--good); font-weight: 700; }
+  #day .wu-row input { font-size: 16px; font-variant-numeric: tabular-nums; padding: 4px 6px; background: var(--panel2); border-radius: 6px; width: 100%; }
+  #day .wu-row input.reps, #day .wu-row input.aout { text-align: center; }
+  #day .wu-row input.aout { color: var(--dim); }
+  #day .wu-row .chk { width: 28px; height: 28px; border: 1px solid var(--dline); border-radius: 7px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: transparent; font-size: 14px; font-weight: 800; }
+  #day .wu-row .chk.on { color: var(--good); border-color: var(--good); background: rgba(76,195,138,.12); }
+  #day .wu-row .pl { grid-column: 3 / 7; font-size: 10px; color: var(--dim); margin-top: -3px; font-variant-numeric: tabular-nums; }
+  #day .wu-row.due { background: rgba(224,163,60,.13); box-shadow: inset 0 0 0 1px var(--warn); border-radius: 6px; }
+  #day .wu-row.late { background: rgba(224,99,90,.13); box-shadow: inset 0 0 0 1px var(--stop); border-radius: 6px; }
+  #day .wu-foot { display: flex; gap: 8px; margin-top: 10px; }
+  #day .wu-add { flex: 1; background: var(--panel2); border: 1px dashed var(--dline); color: var(--dim); font-size: 13px; border-radius: 8px; padding: 8px; cursor: pointer; }
+  #day .wu-tip { font-size: 11px; color: var(--dim); margin-top: 8px; }
+
+  #day .chase { background: var(--panel); border: 1px solid var(--dline); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; }
+  #day .chase-head { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); margin-bottom: 10px; }
+  #day .chase-in { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+  #day .chase-in label { font-size: 13px; color: var(--dim); flex: 1; }
+  #day .chase-in input { background: var(--panel2); border: 1px solid var(--dline); border-radius: 8px; font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; width: 110px; padding: 6px 10px; text-align: center; }
+  #day .chase-out { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  #day .chase-out .c { background: var(--panel2); border: 1px solid var(--dline); border-radius: 10px; padding: 8px 10px; text-align: center; }
+  #day .cl { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+  #day .cv { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; margin-top: 2px; }
+  #day .cn { font-size: 10px; color: var(--dim); margin-top: 2px; min-height: 12px; }
+  #day .cv.feas { color: var(--good); } #day .cv.tight { color: var(--warn); } #day .cv.nope { color: var(--stop); }
+  #day .chase-note { font-size: 11px; color: var(--dim); margin-top: 8px; }
+
+  #day h2 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); margin: 26px 0 10px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+  #day h2::after { content: ""; flex: 1; height: 1px; background: var(--dline); }
+  #day .dcard { background: var(--panel); border: 1px solid var(--dline); border-radius: 14px; padding: 4px 14px; margin-bottom: 12px; }
+  #day .drow { display: flex; justify-content: space-between; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--dline); font-size: 14px; }
+  #day .drow:last-child { border-bottom: none; }
+  #day .drow .k { color: var(--dim); flex-shrink: 0; }
+  #day .drow .v { text-align: right; font-variant-numeric: tabular-nums; }
+  #day .dnote { font-size: 13px; color: #c2c9d2; background: var(--panel); border: 1px solid var(--dline); border-left: 3px solid var(--stop); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
+  #day .dnote b { color: var(--text); }
+  #day .reset { display: block; margin: 26px auto 0; font-size: 12px; font-weight: 700; background: none; border: 1px solid var(--dline); color: var(--dim); border-radius: 8px; padding: 9px 14px; cursor: pointer; }
+  #day footer { margin-top: 16px; font-size: 11px; color: var(--dim); text-align: center; }
+
   /* print sheet: hidden on screen, the only thing on paper */
   #sheet { display: none; }
   @media print {
     @page { margin: 12mm; }
     body { background: #fff; }
     main { display: none; }
+    #day, body.md #day { display: none !important; }
+    body.md { background: #fff; color: #000; }
     #sheet { display: block; font-size: 12px; color: #000; }
     #sheet h1 { font-size: 20px; margin: 0; }
     #sheet h2 { font-size: 14px; margin: 14px 0 4px; }
@@ -167,6 +362,7 @@
     <h1>MASS meet day planner</h1>
     <div class="tmrow">
       <label>Athlete <select id="picker"></select></label>
+      <button class="btn primary" id="modeBtn">Meet day mode</button>
       <button class="btn" id="printBtn">Print handler sheet</button>
     </div>
   </div>
@@ -182,11 +378,8 @@
   <p class="muted small">Edit a number and everything below recalculates. Edits save on this device only.</p>
   <section id="tms" class="grid"></section>
 
-  <div class="h2row">
-    <h2>Attempt selection</h2>
-    <label class="toggle" id="meetDayLbl"><input type="checkbox" id="meetDay"> Meet day mode</label>
-  </div>
-  <p class="muted small" id="attHelp"></p>
+  <h2>Attempt selection</h2>
+  <p class="muted small">Tap one option per attempt. Tap again to clear it. Notes save on this device.</p>
   <section id="attempts" class="grid"></section>
   <section id="totals" class="totals"></section>
 
@@ -197,6 +390,7 @@
   <h2>Meet week plan</h2>
   <section id="week" class="card"></section>
 </main>
+<div id="day"></div>
 <section id="sheet"></section>
 
 <script src="data/config.js"></script>
@@ -276,6 +470,7 @@
     saved.moved = saved.moved || {};
     save("last", athlete.id);
     renderAll();
+    if (dayOn) renderDay();
   }
   function persist() { save(athlete.id, saved); }
 
@@ -323,11 +518,25 @@
     return best;
   }
 
+  // An athlete can carry a set attempt sheet ("attemptSheet" in athletes.js):
+  // for each lift, three rows (opener, 2nd, 3rd) of [Safe, Moderate, Hard].
+  // When it is there it replaces the percentages for that athlete.
+  function sheetKg(liftKey, attemptIdx, tier) {
+    var row = ((athlete.attemptSheet || {})[liftKey] || [])[attemptIdx];
+    var v = row ? row[tier] : null;
+    return (typeof v === "number" && v > 0) ? v : null;
+  }
+  function optKg(liftKey, attemptIdx, tier) {
+    var v = sheetKg(liftKey, attemptIdx, tier);
+    return v !== null ? v : roundKg(tm(liftKey) * C.attempts[attemptIdx].pct[tier] / 100);
+  }
+
   // Options for one attempt. Tiers that round to the same weight merge into one group.
   function optionGroups(liftKey, attemptIdx) {
     var groups = [];
     C.attempts[attemptIdx].pct.forEach(function (pct, tier) {
-      var w = roundKg(tm(liftKey) * pct / 100);
+      var w = optKg(liftKey, attemptIdx, tier);
+      if (sheetKg(liftKey, attemptIdx, tier) !== null && tm(liftKey)) pct = Math.round(w / tm(liftKey) * 100);
       var last = groups[groups.length - 1];
       if (last && last.kg === w) { last.tiers.push(tier); last.pcts.push(pct); }
       else groups.push({ kg: w, tiers: [tier], pcts: [pct] });
@@ -339,13 +548,7 @@
     var tier = picks(liftKey)[attemptIdx];
     if (tier === null || tier === undefined) return null;
     if (tier === "r") return attemptIdx > 0 ? pickedKg(liftKey, attemptIdx - 1) : null;
-    return roundKg(tm(liftKey) * C.attempts[attemptIdx].pct[tier] / 100);
-  }
-  // Meet day marks per attempt: "fast", "grind", "miss", or null.
-  function marks(liftKey) {
-    var m = saved.marks[liftKey];
-    if (!m) { m = saved.marks[liftKey] = [null, null, null]; }
-    return m;
+    return optKg(liftKey, attemptIdx, tier);
   }
   function todayStr() {
     var t = new Date(), p = function (n) { return (n < 10 ? "0" : "") + n; };
@@ -585,68 +788,39 @@
     renderTMs(); renderAttempts(); renderWarmups();
   });
 
-  // ---------- 5. attempts ----------
-  function renderAttempts() {
-    var meetDay = !!saved.meetDay, html = "";
-    $("meetDay").checked = meetDay;
-    $("meetDayLbl").className = "toggle" + (meetDay ? " on" : "");
-    $("attHelp").textContent = meetDay
-      ? "Mark each attempt after the lift. The next attempt shows a suggestion. Tap a mark again to clear it."
-      : "Tap one option per attempt. Tap again to clear it.";
+  // ---------- 5. attempts (plan view) ----------
+  function noteFor(liftKey) { return (saved.liftNotes && saved.liftNotes[liftKey]) || ""; }
+  function setNote(liftKey, text) {
+    saved.liftNotes = saved.liftNotes || {};
+    saved.liftNotes[liftKey] = text;
+    persist();
+  }
 
+  function renderAttempts() {
+    var html = "";
     C.lifts.forEach(function (lift) {
-      var p = picks(lift.key), mk = marks(lift.key);
-      // A repeat only makes sense right after a miss.
-      for (var j = 1; j < p.length; j++) { if (p[j] === "r" && mk[j - 1] !== "miss") p[j] = null; }
+      var p = picks(lift.key);
+      for (var j = 0; j < p.length; j++) { if (typeof p[j] !== "number") p[j] = null; }
 
       html += '<div class="card"><h3>' + esc(lift.name) + ' <span class="muted small">of ' + num(tm(lift.key)) + ' kg</span></h3>';
       if (!tm(lift.key)) { html += '<p class="muted small">Set a training max first.</p></div>'; return; }
       C.attempts.forEach(function (att, i) {
         var mine = p[i];
         var kg = pickedKg(lift.key, i), prev = i > 0 ? pickedKg(lift.key, i - 1) : null;
-        var prevMark = i > 0 ? mk[i - 1] : null, prevMiss = prevMark === "miss";
-        var bad = kg !== null && prev !== null &&
-          (prevMiss ? kg < prev - 1e-9 : kg - prev < C.minJumpKg - 1e-9);
-
-        // Suggestion from the result of the attempt before this one.
-        var sug = [], hint = "";
-        if (meetDay && prevMark && prev !== null && !mk[i]) {
-          if (prevMark === "fast") { sug = [1, 2]; hint = "Fast make. Go " + C.attemptOptions[1] + " or " + C.attemptOptions[2] + "."; }
-          if (prevMark === "grind") { sug = [0]; hint = "Grinder. Go " + C.attemptOptions[0] + "."; }
-          if (prevMiss) { sug = [0, "r"]; hint = "Miss. Repeat " + num(prev) + " or go " + C.attemptOptions[0] + "."; }
-        }
-        var res = mk[i] && kg !== null
-          ? '<span class="result ' + (mk[i] === "miss" ? "miss" : "good") + '">' + (mk[i] === "miss" ? "Miss" : mk[i] === "fast" ? "Good, fast" : "Good, grinder") + '</span>' : '';
-
-        html += '<div class="attempt' + (bad ? ' bad' : '') + '"><div class="lbl">' + esc(att.name) + res + '</div>' +
-          (hint ? '<div class="hint">' + esc(hint) + '</div>' : '') + '<div class="opts">';
-        if (meetDay && prevMiss && prev !== null) {
-          var onR = mine === "r";
-          html += '<button class="opt' + (onR ? ' on' : '') + (sug.indexOf("r") !== -1 ? ' sug' : '') + '" aria-pressed="' + onR + '" data-lift="' + lift.key + '" data-att="' + i + '" data-tier="r">' +
-            '<span class="t">Repeat</span><span class="w">' + num(prev) + '</span><span class="l">' + lb(prev) + ' lb</span></button>';
-        }
+        var bad = kg !== null && prev !== null && kg - prev < C.minJumpKg - 1e-9;
+        html += '<div class="attempt' + (bad ? ' bad' : '') + '"><div class="lbl">' + esc(att.name) + '</div><div class="opts">';
         optionGroups(lift.key, i).forEach(function (g) {
           var on = typeof mine === "number" && g.tiers.indexOf(mine) !== -1;
-          var isSug = g.tiers.some(function (t) { return sug.indexOf(t) !== -1; });
-          html += '<button class="opt' + (on ? ' on' : '') + (isSug ? ' sug' : '') + '" aria-pressed="' + on + '" data-lift="' + lift.key + '" data-att="' + i + '" data-tier="' + g.tiers[0] + '">' +
+          html += '<button class="opt' + (on ? ' on' : '') + '" aria-pressed="' + on + '" data-lift="' + lift.key + '" data-att="' + i + '" data-tier="' + g.tiers[0] + '">' +
             '<span class="t">' + g.tiers.map(function (t) { return esc(C.attemptOptions[t]); }).join(" / ") + '</span>' +
             '<span class="w">' + num(g.kg) + '</span>' +
             '<span class="l">' + lb(g.kg) + ' lb · ' + g.pcts.join("/") + '%</span></button>';
         });
         html += '</div>';
-        if (bad) {
-          html += '<div class="warn">' + (prevMiss
-            ? 'Can\'t go below the ' + esc(C.attempts[i - 1].name.toLowerCase()) + ' (' + num(prev) + ').'
-            : 'Needs to be at least ' + num(C.minJumpKg) + ' kg over the ' + esc(C.attempts[i - 1].name.toLowerCase()) + ' (' + num(prev) + ').') + '</div>';
-        }
-        if (meetDay && kg !== null) {
-          var mb = function (val, cls, label) {
-            return '<button class="mk ' + cls + (mk[i] === val ? ' on' : '') + '" aria-pressed="' + (mk[i] === val) + '" data-lift="' + lift.key + '" data-att="' + i + '" data-mark="' + val + '">' + label + '</button>';
-          };
-          html += '<div class="marks">' + mb("fast", "good", "Good, fast") + mb("grind", "good", "Good, grinder") + mb("miss", "miss", "Miss") + '</div>';
-        }
+        if (bad) html += '<div class="warn">Needs to be at least ' + num(C.minJumpKg) + ' kg over the ' + esc(C.attempts[i - 1].name.toLowerCase()) + ' (' + num(prev) + ').</div>';
         html += '</div>';
       });
+      html += '<label class="lnote-p">Notes<textarea data-note="' + lift.key + '" rows="2" placeholder="Cues, rack height, what to watch">' + esc(noteFor(lift.key)) + '</textarea></label>';
       html += '</div>';
     });
     $("attempts").innerHTML = html;
@@ -655,33 +829,18 @@
   }
 
   $("attempts").addEventListener("click", function (ev) {
-    var b = ev.target.closest ? ev.target.closest(".opt, .mk") : null;
+    var b = ev.target.closest ? ev.target.closest(".opt") : null;
     if (!b) return;
-    var key = b.getAttribute("data-lift"), i = +b.getAttribute("data-att");
-    var mark = b.getAttribute("data-mark");
-    if (mark) {
-      var mk = marks(key);
-      mk[i] = mk[i] === mark ? null : mark;
-    } else {
-      var raw = b.getAttribute("data-tier"), p = picks(key), before = p[i];
-      if (raw === "r") {
-        p[i] = p[i] === "r" ? null : "r";
-      } else {
-        var tier = +raw;
-        var groupTiers = optionGroups(key, i).filter(function (g) { return g.tiers.indexOf(tier) !== -1; })[0].tiers;
-        p[i] = (typeof p[i] === "number" && groupTiers.indexOf(p[i]) !== -1) ? null : tier;
-      }
-      // A mark belongs to the weight it was made on. New weight, clear the mark.
-      if (p[i] !== before) marks(key)[i] = null;
-    }
+    var key = b.getAttribute("data-lift"), i = +b.getAttribute("data-att"), tier = +b.getAttribute("data-tier");
+    var p = picks(key);
+    var groupTiers = optionGroups(key, i).filter(function (g) { return g.tiers.indexOf(tier) !== -1; })[0].tiers;
+    p[i] = (typeof p[i] === "number" && groupTiers.indexOf(p[i]) !== -1) ? null : tier;
     persist();
     renderAttempts(); renderWarmups();
   });
-
-  $("meetDay").addEventListener("change", function () {
-    saved.meetDay = $("meetDay").checked;
-    persist();
-    renderAttempts();
+  $("attempts").addEventListener("input", function (ev) {
+    var key = ev.target.getAttribute && ev.target.getAttribute("data-note");
+    if (key) { setNote(key, ev.target.value); renderSheet(); }
   });
 
   function renderTotals() {
@@ -695,24 +854,9 @@
         ? '<div class="big muted">--</div><div class="small muted">Pick a ' + esc(C.attempts[attIdx].name) + ' for: ' + esc(missing.join(", ")) + '</div>'
         : '<div class="big">' + num(sum) + ' kg</div><div class="small muted">' + lb(sum) + ' lb</div>';
     }
-    var html =
+    $("totals").innerHTML =
       '<div class="card"><h3>Projected total</h3><div class="small muted">Selected 3rds</div>' + total(2) + '</div>' +
       '<div class="card"><h3>Made 2nds total</h3><div class="small muted">If the selected 2nds are the last makes</div>' + total(1) + '</div>';
-    if (saved.meetDay) {
-      var sum = 0, parts = [];
-      C.lifts.forEach(function (lift) {
-        var best = 0;
-        marks(lift.key).forEach(function (m, i) {
-          var kg = pickedKg(lift.key, i);
-          if ((m === "fast" || m === "grind") && kg !== null && kg > best) best = kg;
-        });
-        sum += best;
-        parts.push(lift.name + " " + (best ? num(best) : "no make yet"));
-      });
-      html += '<div class="card"><h3>Total so far</h3><div class="small muted">Best good lift on each</div>' +
-        '<div class="big">' + num(sum) + ' kg</div><div class="small muted">' + lb(sum) + ' lb · ' + esc(parts.join(", ")) + '</div></div>';
-    }
-    $("totals").innerHTML = html;
   }
 
   // ---------- 7. meet week ----------
@@ -764,6 +908,9 @@
     });
     h += '</tbody></table><p style="margin-top:6px"><b>Projected total:</b> ' + (all ? num(sum) + ' kg (' + lb(sum) + ' lb)' : '______') + '</p>';
 
+    var noted = C.lifts.filter(function (l) { return noteFor(l.key); });
+    if (noted.length) h += '<h2>Notes</h2>' + noted.map(function (l) { return '<p><b>' + esc(l.name) + ':</b> ' + esc(noteFor(l.key)) + '</p>'; }).join("");
+
     h += '<h2>Warm-ups (plates per side, ' + num(C.plates.barKg) + ' kg bar' +
       (C.plates.collarKgEach > 0 ? ', ' + num(C.plates.collarKgEach) + ' kg collars' : '') + ')</h2><div class="wu">';
     C.lifts.forEach(function (lift) {
@@ -784,8 +931,9 @@
   $("printBtn").addEventListener("click", function () { window.print(); });
 
   // ---------- 6. warm-ups ----------
-  function plateText(kg) {
-    var P = C.plates, bar = P.barKg, collars = P.collarKgEach * 2;
+  function plateText(kg, collarsOn) {
+    var P = C.plates, bar = P.barKg;
+    var collars = collarsOn === false ? 0 : (P.collarKgEach || (collarsOn ? 2.5 : 0)) * 2;
     if (kg <= bar + 1e-9) return "Empty bar";
     var load = kg - bar;
     var useCollars = collars > 0 && load >= collars - 1e-9;
@@ -824,6 +972,478 @@
       (C.plates.collarKgEach > 0 ? " with " + num(C.plates.collarKgEach) + " kg collars." : ", no collar weight counted.");
   }
 
+  // =====================================================================
+  // MEET DAY MODE. Dark card modeled on the Worlds meet day card:
+  // session clock, lifters-till-up counter, live board, flight plan,
+  // editable attempts with good/miss pills, warm-up flow, subtotals,
+  // chase calc. Everything here saves per athlete on this device.
+  // =====================================================================
+  var MD = C.meetDay || { lastWarmupOut: 8, warmupSpacing: 5, minutesPerAttempt: 1 };
+  var dayOn = false;
+
+  function f1(n) { return (+n).toFixed(1).replace(/\.0$/, ""); }
+  function firstName() { return String(athlete.name).split(" ")[0]; }
+  function shortOf(lift) { return lift.short || lift.name.slice(0, 2).toUpperCase(); }
+  function liftByKey(k) { return C.lifts.filter(function (l) { return l.key === k; })[0]; }
+  function liftIdx(k) { for (var i = 0; i < C.lifts.length; i++) { if (C.lifts[i].key === k) return i; } return 0; }
+
+  function defaultWu(k, opener) {
+    var w = C.warmups[k];
+    if (!w || !(opener > 0)) return [];
+    var rows = [];
+    if (w.barReps > 0) rows.push(["Empty bar", num(C.plates.barKg), String(w.barReps)]);
+    w.steps.forEach(function (s, i) {
+      rows.push([i === w.steps.length - 1 ? "Last warm-up" : "Warm-up", num(roundKg(opener * s.pct / 100)), String(s.reps)]);
+    });
+    var n = rows.length;
+    // row = [name, kg, reps, done, stamped time, lifters out, done-at]
+    return rows.map(function (r, i) {
+      return [r[0], r[1], r[2], false, null, String(MD.lastWarmupOut + MD.warmupSpacing * (n - 1 - i)), null];
+    });
+  }
+  // Attempts to start from: baked "attempts" in athletes.js, else the plan picks.
+  function planAttempts(k) {
+    var baked = (athlete.attempts || {})[k] || [];
+    return C.attempts.map(function (a, i) {
+      var kg = (baked[i] !== undefined && baked[i] !== null && baked[i] !== "") ? +baked[i] : pickedKg(k, i);
+      return { kg: (kg === null || kg === undefined || isNaN(kg)) ? "" : num(kg), st: "" };
+    });
+  }
+  function dayState() {
+    var d = saved.day || (saved.day = {});
+    d.att = d.att || {}; d.wu = d.wu || {}; d.fl = d.fl || {}; d.cnt = d.cnt || {};
+    d.fp = d.fp || {}; d.open = d.open || {};
+    if (!d.lift || !liftByKey(d.lift)) d.lift = C.lifts[0].key;
+    if (d.collars === undefined) d.collars = C.plates.collarKgEach > 0;
+    C.lifts.forEach(function (lift) {
+      var k = lift.key;
+      if (!d.att[k]) d.att[k] = planAttempts(k);
+      if (!d.wu[k]) d.wu[k] = defaultWu(k, parseFloat(d.att[k][0].kg));
+      if (!d.fl[k]) d.fl[k] = ["", "", ""];
+      if (d.cnt[k] === undefined) d.cnt[k] = null;
+    });
+    return d;
+  }
+  function dayPlates(kg) {
+    var n = parseFloat(kg);
+    if (isNaN(n) || n < C.plates.barKg) return "";
+    if (n === C.plates.barKg) return "empty bar";
+    var t = plateText(n, dayState().collars).replace(" + collar", "").replace(/^collar$/, "collars only");
+    return t + " / side";
+  }
+  function fmtTime(d) {
+    var h = d.getHours(), m = d.getMinutes(), ap = h >= 12 ? "p" : "a";
+    h = h % 12 || 12;
+    return h + ":" + (m < 10 ? "0" : "") + m + ap;
+  }
+  function fmtElapsed(ms) {
+    var s = Math.floor(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60;
+    var p = function (n) { return (n < 10 ? "0" : "") + n; };
+    return (h ? h + ":" + p(m) : m) + ":" + p(x);
+  }
+
+  // ----- render: whole card -----
+  function renderDay() {
+    var d = dayState(), m = athlete.meet || {};
+    var bits = [];
+    if (m.date) bits.push(longDate(m.date));
+    if (m.federation) bits.push(m.federation);
+    if (m.weightClass) bits.push(m.weightClass);
+    if (m.weighIn) bits.push("Weigh-in " + m.weighIn);
+    bits.push("Training maxes " + C.lifts.map(function (l) { return num(tm(l.key)); }).join(" / "));
+
+    $("day").innerHTML =
+      '<div class="dtop"><span class="eyebrow">MASS Strength · Meet day</span><span class="chips">' +
+        ATHLETES.map(function (a) {
+          return '<button class="achip' + (a.id === athlete.id ? ' on' : '') + '" data-act="ath" data-id="' + esc(a.id) + '">' + esc(String(a.name).split(" ")[0]) + '</button>';
+        }).join("") +
+        '<button class="pbtn" data-act="plan">Plan view</button></span></div>' +
+      '<header><h1>' + esc(firstName()) + (m.name ? ' · ' + esc(m.name) : '') + '</h1><div class="sub">' + esc(bits.join(" · ")) + '</div></header>' +
+
+      '<div class="stick">' +
+        '<div class="clock">' +
+          '<div class="ck" id="d-sess" data-act="clocktap"><div class="cl-lab"><span>Session</span><button class="crst" id="d-crst" data-act="clockreset" style="display:none">reset</button></div>' +
+            '<div class="cl-time" id="d-cltime">0:00</div><div class="cl-hint" id="d-clhint">tap to start</div></div>' +
+          '<div class="ck" id="d-last"><div class="cl-lab"><span>Last set</span></div><div class="cl-time" id="d-lstime">--</div><div class="cl-hint" id="d-lshint">check off a warm-up</div></div>' +
+        '</div>' +
+        '<div class="ctr' + (d.ctrClosed ? ' closed' : '') + '" id="d-ctr"><div class="ctr-top"><div class="lchips">' +
+          C.lifts.map(function (l, i) { return '<button class="lchip l' + i + '" data-act="setlift" data-lift="' + l.key + '">' + esc(shortOf(l)) + '</button>'; }).join("") +
+          '</div><button class="cbtn minus" data-act="bump" data-d="-1">&minus;1</button>' +
+          '<input id="d-cnum" inputmode="numeric" placeholder="#">' +
+          '<span class="clab">lifters<br>till up</span><button class="cbtn plus" data-act="bump" data-d="1">+1</button></div>' +
+          '<div class="ctr-line"><button class="mini-minus" data-act="bump" data-d="-1">&minus;1</button><div class="take" id="d-take"></div>' +
+          '<button class="fold" id="d-fold" data-act="fold" aria-label="Show or hide counter">' + (d.ctrClosed ? '&#9660;' : '&#9650;') + '</button></div></div>' +
+      '</div>' +
+
+      '<div class="board" id="d-board"><div class="board-bar"><button data-act="board"><span id="d-boardlab">&#9654; Live board (LiftingCast)</span></button>' +
+        '<a id="d-boardext" target="_blank" rel="noopener"' + (boardUrl() ? ' href="' + esc(boardUrl()) + '"' : ' style="display:none"') + '>open full</a></div>' +
+        '<div class="board-url"><input id="d-boardurl" inputmode="url" placeholder="Paste the LiftingCast board link" value="' + esc(d.board || "") + '"></div>' +
+        '<iframe id="d-boardframe" title="LiftingCast live board" loading="lazy"></iframe></div>' +
+
+      '<div class="fp' + (d.fpClosed ? ' closed' : '') + '" id="d-fp"><div class="fp-head" data-act="fptoggle"><span>Flight plan</span><span class="fp-sum" id="d-fpsum"></span><span id="d-fpchev">' + (d.fpClosed ? '&#9654;' : '&#9660;') + '</span></div>' +
+        '<div class="fp-body"><div class="fp-in">' +
+          fpField("start", "Session start", "time") + fpField("a", "Lifters before this flight", "num") + fpField("b", "Lifters in this flight", "num") +
+          fpField("c", "Lifters after", "num") + fpField("pos", "Spot in flight", "num") + fpField("brk", "Break min", "num") +
+        '</div><div id="d-fpout"></div>' +
+        '<div class="fp-note">Fill from LiftingCast in the morning. Times assume about ' + num(MD.minutesPerAttempt) + ' min per attempt and the break you enter between lifts. "Spot" is the place in round 1 of the flight (lightest opener goes first). Set count covers the opener only.</div></div></div>' +
+
+      '<div class="collar"><span>Plate math: ' + num(C.plates.barKg) + ' kg bar</span><div class="tog' + (d.collars ? ' on' : '') + '" id="d-tog" data-act="collar"></div><span id="d-collarlab">' + (d.collars ? '+ 2.5 kg collars' : 'no collars') + '</span></div>' +
+      '<div class="dhint">Tap a weight to edit. Tap the pill to mark good / miss / clear. Small numbers under a weight are the Safe / Moderate / Hard options: tap one to use it. Subtotals update live.</div>' +
+
+      '<div id="d-lifts"></div>' +
+
+      '<div class="chase"><div class="chase-head">Placement chase calc</div>' +
+        '<div class="chase-in"><label for="d-rival">Rival total (or projected total) to beat:</label><input id="d-rival" inputmode="decimal" placeholder="kg" value="' + esc(d.rival || "") + '"></div>' +
+        '<div class="chase-out"><div class="c"><div class="cl">' + esc(shortOf(C.lifts[C.lifts.length - 1])) + ' to match</div><div class="cv" id="d-match">--</div><div class="cn" id="d-matchn"></div></div>' +
+        '<div class="c"><div class="cl">' + esc(shortOf(C.lifts[C.lifts.length - 1])) + ' to beat (+2.5)</div><div class="cv" id="d-beat">--</div><div class="cn" id="d-beatn"></div></div></div>' +
+        '<div class="chase-note">Uses the live subtotal (best good lift on each, or the planned 2nd if nothing is marked yet). Equal totals go to the lighter lifter. Green = at or under the training max, amber = up to the Hard 3rd, red = past it.</div></div>' +
+
+      dayReference() +
+      '<button class="reset" data-act="reset">Reset meet day for ' + esc(firstName()) + '</button>' +
+      '<footer>Edits, marks, notes, and times save on this device only.</footer>';
+
+    renderLifts(); renderFPOut(); syncCnum(); tick();
+  }
+  function fpField(key, label, kind) {
+    var v = dayState().fp[key] || "";
+    return '<div><label>' + label + '</label><input data-fp="' + key + '" ' +
+      (kind === "time" ? 'type="time"' : 'inputmode="numeric" placeholder="' + (key === "brk" ? "0" : "#") + '"') + ' value="' + esc(v) + '"></div>';
+  }
+  function boardUrl() {
+    var u = String(dayState().board || "").trim();
+    return /^https:\/\//i.test(u) ? u : "";
+  }
+  function dayReference() {
+    var h = '<h2>Reference numbers</h2><div class="dcard">';
+    C.lifts.forEach(function (lift) {
+      var b = athlete.priorBests && athlete.priorBests[lift.key];
+      h += '<div class="drow"><span class="k">' + esc(lift.name) + ' max / prior best</span><span class="v">' + num(tm(lift.key)) + ' · ' +
+        (b ? num(b.kg) + ' (' + esc(shortDate(b.date)) + ')' : '--') + '</span></div>';
+    });
+    h += '</div>';
+    var fl = athlete.flags || [];
+    if (fl.length) {
+      h += '<h2>Flags</h2>' + fl.map(function (x) { return '<div class="dnote"><b>' + esc(x.type) + ':</b> ' + esc(x.text) + '</div>'; }).join("");
+    }
+    return h;
+  }
+
+  // ----- render: lift cards, strips, warm-ups -----
+  function renderLifts() {
+    var d = dayState(), h = "", last = C.lifts.length - 1;
+    C.lifts.forEach(function (lift, li) {
+      var k = lift.key, b = athlete.priorBests && athlete.priorBests[k];
+      var ref = 'Max ' + num(tm(k)) + (b ? ' · best ' + num(b.kg) : '');
+      h += '<div class="lift l' + li + (li === 0 ? ' first' : '') + (li === last ? ' last' : '') + '" data-lift="' + k + '">' +
+        '<div class="lift-head"><span class="lift-name">' + esc(lift.name) + '</span><span class="lift-ref">' + esc(ref) +
+        '<button class="mini" data-act="fromplan" data-lift="' + k + '">from plan</button></span></div><div class="attempts">';
+      d.att[k].forEach(function (a, i) {
+        var cur = parseFloat(a.kg);
+        h += '<div class="att' + (a.st === "g" ? ' good' : a.st === "m" ? ' miss' : '') + '"><div class="lab">' + esc(C.attempts[i].name) + '</div>' +
+          '<input class="kg" inputmode="decimal" data-lift="' + k + '" data-i="' + i + '" value="' + esc(a.kg) + '" placeholder="--">' +
+          '<div class="plates">' + esc(dayPlates(a.kg)) + '</div><div class="opts">' +
+          (tm(k) ? optionGroups(k, i).map(function (g) {
+            return '<button class="ochip' + (cur === g.kg ? ' on' : '') + '" data-act="opt" data-lift="' + k + '" data-i="' + i + '" data-kg="' + g.kg + '" title="' +
+              g.tiers.map(function (t) { return esc(C.attemptOptions[t]); }).join(" / ") + '">' + num(g.kg) + '</button>';
+          }).join("") : '') +
+          '</div><div class="mark" data-act="mark" data-lift="' + k + '" data-i="' + i + '">' + (a.st === "g" ? '&#10003; GOOD' : a.st === "m" ? '&#10007; MISS' : 'SET') + '</div></div>';
+      });
+      h += '</div><div class="lnote"><label>Notes</label><textarea data-note="' + k + '" rows="2" placeholder="Cues, rack height, what to watch">' + esc(noteFor(k)) + '</textarea></div>';
+      if (li === last) h += '<div class="final" id="d-final"></div>';
+
+      // warm-up flow
+      var fl = d.fl[k];
+      h += '<div class="wu' + (d.open[k] ? ' open' : '') + '"><button class="wu-toggle" data-act="wutoggle" data-lift="' + k + '"><span>Warm-up flow</span><span>&#9662;</span></button><div class="wu-body">' +
+        '<div class="wu-calc"><div class="wc-title">Back-calc warm-up times</div><div class="wc-grid">' +
+          '<div class="wc-field"><label>Flight starts</label><input type="time" data-fl="0" data-lift="' + k + '" value="' + esc(fl[0] || "") + '"></div>' +
+          '<div class="wc-field"><label>Position</label><input inputmode="numeric" placeholder="#" data-fl="1" data-lift="' + k + '" value="' + esc(fl[1] || "") + '"></div>' +
+          '<div class="wc-field"><label>Lifters in flight</label><input inputmode="numeric" placeholder="#" data-fl="2" data-lift="' + k + '" value="' + esc(fl[2] || "") + '"></div>' +
+        '</div><div class="wc-out"><div class="wc-opener">Est. opener: <b id="d-otime-' + k + '">' + openerLabel(k) + '</b></div>' +
+        '<button data-act="stamp" data-lift="' + k + '">Stamp times</button></div></div>' +
+        '<div class="wu-cols"><span>Time</span><span>Out</span><span>Set</span><span>kg</span><span>Reps</span><span></span></div><div class="wu-list">';
+      d.wu[k].forEach(function (r, ri) {
+        h += '<div class="wu-row" data-lift="' + k + '" data-r="' + ri + '">' +
+          '<span class="n' + (r[4] ? ' stamped' : '') + '" data-act="delrow">' + esc(r[4] || (ri + 1)) + '</span>' +
+          '<input class="aout" inputmode="numeric" data-f="5" value="' + esc(r[5] == null ? "" : r[5]) + '">' +
+          '<input class="set" data-f="0" value="' + esc(r[0]) + '">' +
+          '<input class="wkg" inputmode="decimal" data-f="1" value="' + esc(r[1]) + '">' +
+          '<input class="reps" inputmode="numeric" data-f="2" value="' + esc(r[2]) + '">' +
+          '<div class="chk' + (r[3] ? ' on' : '') + '" data-act="chk">&#10003;</div>' +
+          '<span class="pl">' + esc(dayPlates(r[1])) + '</span></div>';
+      });
+      var wnote = (C.warmups[k] || {}).note;
+      h += '</div><div class="wu-foot"><button class="wu-add" data-act="addrow" data-lift="' + k + '">+ Add warm-up set</button>' +
+        '<button class="wu-btn" data-act="rebuild" data-lift="' + k + '">Rebuild from opener</button></div>' +
+        '<div class="wu-tip">' + (wnote ? esc(wnote) + ' ' : '') + 'Out = lifters left before the opener when this set is due. Double-tap a row number to delete the row.</div>' +
+        '</div></div></div>';
+
+      if (li < last) {
+        var next = C.lifts[li + 1];
+        h += '<div class="strip"><div class="strip-head"><span class="strip-title">Subtotal after ' + esc(lift.name.toLowerCase()) +
+          (li + 1 === last ? ' · forecast with ' + esc(next.name.toLowerCase()) : '') + '</span><span class="strip-live" id="d-sub-' + li + '">--</span></div>' +
+          '<div class="scen" id="d-scen-' + li + '"></div></div>';
+      }
+    });
+    $("d-lifts").innerHTML = h;
+    renderForecast(); pace();
+  }
+
+  // ----- attempts / forecast / chase -----
+  function bestGood(atts) { var b = 0; atts.forEach(function (a) { if (a.st === "g" && a.kg > b) b = a.kg; }); return b; }
+  function liveOrPlanned(atts) {
+    if (atts.some(function (a) { return a.st !== ""; })) return { val: bestGood(atts), live: true };
+    return { val: atts[1] ? atts[1].kg : 0, live: false };
+  }
+  function renderForecast() {
+    var d = dayState(), run = 0, allLive = true, last = C.lifts.length - 1;
+    C.lifts.forEach(function (lift, li) {
+      var atts = d.att[lift.key].map(function (a) { return { kg: parseFloat(a.kg) || 0, st: a.st || "" }; });
+      if (li < last) {
+        var res = liveOrPlanned(atts);
+        run += res.val; allLive = allLive && res.live;
+        var next = C.lifts[li + 1];
+        $("d-sub-" + li).innerHTML = f1(run) + ' <small>' + (allLive ? 'LIVE' : 'PROJ') + '</small>';
+        $("d-scen-" + li).innerHTML = d.att[next.key].map(function (a, i) {
+          return '<div class="s' + (a.st === "m" ? ' dead' : '') + '"><div class="sl">+' + esc(shortOf(next)) + ' ' + esc(C.attempts[i].name) +
+            (li + 1 === last ? ' &rarr; total' : '') + '</div><div class="sv">' + f1(run + (parseFloat(a.kg) || 0)) + '</div></div>';
+        }).join("");
+      } else {
+        var best = bestGood(atts);
+        $("d-final").innerHTML = best > 0 ? '<b>Current total: ' + f1(run + best) + '</b>' : '';
+        var rival = parseFloat(d.rival), tmLast = tm(lift.key);
+        var top = roundKg(tmLast * Math.max.apply(null, C.attempts[C.attempts.length - 1].pct) / 100);
+        if (!isNaN(rival) && rival > 0) {
+          paintChase($("d-match"), $("d-matchn"), rival - run, tmLast, top);
+          paintChase($("d-beat"), $("d-beatn"), rival + 2.5 - run, tmLast, top);
+        } else {
+          ["d-match", "d-beat"].forEach(function (id) { $(id).textContent = "--"; $(id).className = "cv"; });
+          $("d-matchn").textContent = ""; $("d-beatn").textContent = "";
+        }
+      }
+    });
+  }
+  function paintChase(el, note, need, tmLast, top) {
+    if (need <= 0) { el.textContent = "done"; el.className = "cv feas"; note.textContent = "Subtotal already covers it"; return; }
+    el.textContent = f1(need) + " kg";
+    if (need <= tmLast) { el.className = "cv feas"; note.textContent = "At or under the training max"; }
+    else if (need <= top) { el.className = "cv tight"; note.textContent = "Over the training max. Coach call"; }
+    else { el.className = "cv nope"; note.textContent = "Out of range today"; }
+  }
+
+  // ----- counter + pacing -----
+  function syncCnum() {
+    var d = dayState();
+    Array.prototype.forEach.call(document.querySelectorAll("#day .lchip"), function (c) {
+      c.classList.toggle("on", c.getAttribute("data-lift") === d.lift);
+    });
+    var el = $("d-cnum"), v = d.cnt[d.lift];
+    if (document.activeElement !== el) el.value = v === null ? "" : v;
+    el.classList.toggle("set", v !== null);
+    renderTake();
+  }
+  function nextRowIdx(rows) {
+    for (var i = 0; i < rows.length; i++) { if (!rows[i][3] && !isNaN(parseInt(rows[i][5], 10))) return i; }
+    return -1;
+  }
+  function pace() {
+    var d = dayState();
+    C.lifts.forEach(function (lift) {
+      var k = lift.key, rows = d.wu[k], els = document.querySelectorAll('#day .wu-row[data-lift="' + k + '"]');
+      Array.prototype.forEach.call(els, function (e) { e.classList.remove("due", "late"); });
+      var cnt = d.cnt[k]; if (cnt === null) return;
+      var ni = nextRowIdx(rows); if (ni < 0 || !els[ni]) return;
+      var av = parseInt(rows[ni][5], 10);
+      if (cnt === av) els[ni].classList.add("due"); else if (cnt < av) els[ni].classList.add("late");
+    });
+    renderTake();
+  }
+  function renderTake() {
+    var d = dayState(), el = $("d-take");
+    if (!el) return;
+    el.className = "take";
+    var cnt = d.cnt[d.lift], folded = !!d.ctrClosed, who = firstName();
+    var tag = '<b>' + esc(shortOf(liftByKey(d.lift))) + (folded && cnt !== null ? ' ' + cnt + ' out' : '') + '</b> · ';
+    if (cnt === null && folded) { el.innerHTML = tag + 'counter not set'; return; }
+    if (cnt === null) { el.innerHTML = 'Count the lifters before ' + esc(who) + ', type it in the #. Tap &minus;1 each time the bar turns over.'; return; }
+    if (cnt === 0) { el.classList.add("up"); el.innerHTML = tag + esc(who.toUpperCase()) + ' IS UP.'; return; }
+    var rows = d.wu[d.lift], ni = nextRowIdx(rows);
+    if (ni < 0) { el.innerHTML = tag + 'Warm-ups done · ' + cnt + ' till up.'; return; }
+    var r = rows[ni], av = parseInt(r[5], 10);
+    var set = esc(r[1] ? r[1] + ' kg' : 'next set') + (r[2] ? ' × ' + esc(r[2]) : '');
+    if (cnt > av) el.innerHTML = tag + 'Next: ' + set + ' at ' + av + ' out.';
+    else if (cnt === av) { el.classList.add("due"); el.innerHTML = tag + 'TAKE NOW: ' + set + '.'; }
+    else { el.classList.add("late"); el.innerHTML = tag + 'BEHIND · take ' + set + ' now.'; }
+  }
+
+  // ----- clocks -----
+  function tick() {
+    if (!dayOn || !$("d-sess")) return;
+    var d = dayState(), now = Date.now();
+    $("d-sess").classList.toggle("run", !!d.ck);
+    $("d-crst").style.display = d.ck ? "" : "none";
+    $("d-cltime").textContent = d.ck ? fmtElapsed(now - d.ck) : "0:00";
+    $("d-clhint").textContent = d.ck ? "running" : "tap to start";
+    var ls = 0;
+    d.wu[d.lift].forEach(function (r) { if (r[3] && r[6] && r[6] > ls) ls = r[6]; });
+    var slow = !!ls && now - ls >= 360000;
+    $("d-last").classList.toggle("slow", slow);
+    $("d-lstime").textContent = ls ? fmtElapsed(now - ls) : "--";
+    $("d-lshint").textContent = ls ? liftByKey(d.lift).name.toLowerCase() + (slow ? " · 6:00+" : "") : "check off a warm-up";
+  }
+  setInterval(tick, 500);
+
+  // ----- flight plan (one platform: every flight finishes a lift before the next lift) -----
+  function fpCalc() {
+    var d = dayState(), g = function (k) { var v = parseInt(d.fp[k], 10); return isNaN(v) ? null : v; };
+    var a = g("a"), b = g("b"), c = g("c"), pos = g("pos") || 1, brk = g("brk") || 0;
+    if (a === null) return null;
+    var start = d.fp.start || "", full = b !== null && c !== null && !!start, total = (a || 0) + (b || 0) + (c || 0);
+    var at = function (min) {
+      var p = start.split(":"), t = new Date();
+      t.setHours(+p[0], +p[1], 0, 0); t.setMinutes(t.getMinutes() + Math.round(min * MD.minutesPerAttempt));
+      return t;
+    };
+    return C.lifts.map(function (lift, i) {
+      var fs = full ? i * (3 * total + brk / MD.minutesPerAttempt) + 3 * a : (i === 0 && start ? 3 * a : null);
+      return { k: lift.key, i: i, count: 3 * a + pos - 1, flightStart: fs === null ? null : at(fs), opener: fs === null ? null : at(fs + pos - 1) };
+    });
+  }
+  function renderFPOut() {
+    var out = $("d-fpout"), sum = $("d-fpsum"), r = fpCalc();
+    if (!out) return;
+    if (!r) { out.innerHTML = ""; sum.textContent = "not filled in"; return; }
+    out.innerHTML = r.map(function (x) {
+      var l = liftByKey(x.k);
+      return '<div class="fp-row"><span class="lk l' + x.i + '">' + esc(shortOf(l)) + '</span><span class="tx">Count <b>' + x.count + '</b> at the start of ' + esc(l.name.toLowerCase()) +
+        (x.flightStart ? '<br>This flight starts ~<b>' + fmtTime(x.flightStart) + '</b> · opener ~<b>' + fmtTime(x.opener) + '</b>' : '<br>Enter start time and all lifter counts for times') +
+        '</span><button data-act="fpset" data-lift="' + x.k + '" data-n="' + x.count + '">Set count</button></div>';
+    }).join("") + (r[0].flightStart ? '<div class="fp-row"><span></span><span class="tx">Copy flight start and spot into each lift\'s warm-up back-calc</span><button data-act="fpfill">Fill timers</button></div>' : '');
+    sum.textContent = r.filter(function (x) { return x.opener; }).map(function (x) { return shortOf(liftByKey(x.k)) + " ~" + fmtTime(x.opener); }).join(" · ") || "counts set";
+  }
+
+  // ----- warm-up back-calc -----
+  function calcOpener(k) {
+    var fl = dayState().fl[k], t = fl[0], pos = parseInt(fl[1], 10);
+    if (!t) return null;
+    var p = t.split(":"), dt = new Date();
+    dt.setHours(+p[0], +p[1], 0, 0);
+    if (!isNaN(pos) && pos > 1) dt.setMinutes(dt.getMinutes() + Math.round((pos - 1) * MD.minutesPerAttempt));
+    return dt;
+  }
+  function openerLabel(k) { var t = calcOpener(k); return t ? fmtTime(t) : "--"; }
+
+  // ----- events -----
+  function setMode(on) {
+    dayOn = !!on;
+    save("mode", dayOn ? "day" : "plan");
+    document.body.classList.toggle("md", dayOn);
+    if (dayOn) renderDay(); else renderAll();
+    window.scrollTo(0, 0);
+  }
+  $("modeBtn").addEventListener("click", function () { setMode(true); });
+
+  $("day").addEventListener("click", function (ev) {
+    var el = ev.target.closest ? ev.target.closest("[data-act]") : null;
+    if (!el) return;
+    var act = el.getAttribute("data-act"), d = dayState();
+    var row = el.closest(".wu-row"), k = el.getAttribute("data-lift") || (row && row.getAttribute("data-lift"));
+    var i = +el.getAttribute("data-i");
+
+    if (act === "plan") { setMode(false); return; }
+    if (act === "ath") { picker.value = el.getAttribute("data-id"); setAthlete(picker.value); window.scrollTo(0, 0); return; }
+    if (act === "clockreset") { ev.stopPropagation(); d.ck = null; persist(); tick(); return; }
+    if (act === "clocktap") { if (!d.ck) { d.ck = Date.now(); persist(); tick(); } return; }
+    if (act === "setlift") { d.lift = k; persist(); syncCnum(); pace(); tick(); return; }
+    if (act === "bump") { d.cnt[d.lift] = Math.max(0, (d.cnt[d.lift] === null ? 0 : d.cnt[d.lift]) + (+el.getAttribute("data-d"))); persist(); syncCnum(); pace(); return; }
+    if (act === "fold") { d.ctrClosed = !d.ctrClosed; persist(); $("d-ctr").classList.toggle("closed", d.ctrClosed); $("d-fold").innerHTML = d.ctrClosed ? "&#9660;" : "&#9650;"; renderTake(); return; }
+    if (act === "board") {
+      var b = $("d-board"), fr = $("d-boardframe"), u = boardUrl(), open = !b.classList.contains("open");
+      if (open && !u) { $("d-boardurl").focus(); return; }
+      if (open && fr.getAttribute("src") !== u) fr.setAttribute("src", u);
+      b.classList.toggle("open", open);
+      $("d-boardlab").innerHTML = (open ? "&#9660;" : "&#9654;") + " Live board (LiftingCast)";
+      return;
+    }
+    if (act === "fptoggle") { d.fpClosed = !d.fpClosed; persist(); $("d-fp").classList.toggle("closed", d.fpClosed); $("d-fpchev").innerHTML = d.fpClosed ? "&#9654;" : "&#9660;"; return; }
+    if (act === "fpset") { d.lift = k; d.cnt[k] = +el.getAttribute("data-n"); persist(); syncCnum(); pace(); tick(); window.scrollTo(0, 0); return; }
+    if (act === "fpfill") {
+      var r = fpCalc(); if (!r) return;
+      r.forEach(function (x) {
+        if (!x.flightStart) return;
+        var p = function (n) { return (n < 10 ? "0" : "") + n; };
+        d.fl[x.k] = [p(x.flightStart.getHours()) + ":" + p(x.flightStart.getMinutes()), d.fp.pos || "1", d.fp.b || ""];
+      });
+      persist(); renderLifts(); return;
+    }
+    if (act === "collar") { d.collars = !d.collars; persist(); $("d-tog").classList.toggle("on", d.collars); $("d-collarlab").textContent = d.collars ? "+ 2.5 kg collars" : "no collars"; renderLifts(); return; }
+    if (act === "mark") { var a = d.att[k][i]; a.st = a.st === "g" ? "m" : a.st === "m" ? "" : "g"; persist(); renderLifts(); return; }
+    if (act === "opt") { d.att[k][i].kg = num(+el.getAttribute("data-kg")); persist(); renderLifts(); return; }
+    if (act === "wutoggle") { d.open[k] = !d.open[k]; persist(); el.parentNode.classList.toggle("open", d.open[k]); return; }
+    if (act === "chk") { var rr = d.wu[k][+row.getAttribute("data-r")]; rr[3] = !rr[3]; rr[6] = rr[3] ? Date.now() : null; persist(); el.classList.toggle("on", rr[3]); pace(); tick(); return; }
+    if (act === "addrow") { d.wu[k].push(["Warm-up", "", "", false, null, "", null]); persist(); renderLifts(); return; }
+    if (act === "stamp") {
+      var t0 = calcOpener(k);
+      if (!t0) { $("d-otime-" + k).textContent = "set flight time"; return; }
+      var n = d.wu[k].length;
+      d.wu[k].forEach(function (r2, ri) {
+        var t = new Date(t0);
+        t.setMinutes(t.getMinutes() - Math.round((MD.lastWarmupOut + MD.warmupSpacing * (n - 1 - ri)) * MD.minutesPerAttempt));
+        r2[4] = fmtTime(t);
+      });
+      persist(); renderLifts(); return;
+    }
+    if (act === "rebuild") {
+      var op = parseFloat(d.att[k][0].kg);
+      if (!(op > 0)) { window.alert("Enter an opener first."); return; }
+      if (!window.confirm("Rebuild " + liftByKey(k).name.toLowerCase() + " warm-ups from the " + num(op) + " kg opener? Checks and edits on these rows clear.")) return;
+      d.wu[k] = defaultWu(k, op); d.open[k] = true; persist(); renderLifts(); return;
+    }
+    if (act === "fromplan") {
+      if (!window.confirm("Reload " + liftByKey(k).name.toLowerCase() + " attempts and warm-ups from the plan? Marks for this lift clear.")) return;
+      d.att[k] = planAttempts(k); d.wu[k] = defaultWu(k, parseFloat(d.att[k][0].kg)); persist(); renderLifts(); return;
+    }
+    if (act === "reset") {
+      if (!window.confirm("Reset meet day for " + firstName() + "? Attempts reload from the plan. Marks, warm-up checks, counter, and clocks clear. Notes stay.")) return;
+      var keep = { board: d.board, collars: d.collars };
+      saved.day = keep; persist(); renderDay(); window.scrollTo(0, 0); return;
+    }
+  });
+
+  $("day").addEventListener("dblclick", function (ev) {
+    var el = ev.target.closest ? ev.target.closest('[data-act="delrow"]') : null;
+    if (!el) return;
+    var row = el.closest(".wu-row"), d = dayState();
+    d.wu[row.getAttribute("data-lift")].splice(+row.getAttribute("data-r"), 1);
+    persist(); renderLifts();
+  });
+
+  $("day").addEventListener("input", function (ev) {
+    var t = ev.target, d = dayState(), k = t.getAttribute("data-lift");
+    if (t.classList.contains("kg")) {
+      d.att[k][+t.getAttribute("data-i")].kg = t.value;
+      t.parentNode.querySelector(".plates").textContent = dayPlates(t.value);
+      persist(); renderForecast(); return;
+    }
+    var row = t.closest(".wu-row");
+    if (row) {
+      var rk = row.getAttribute("data-lift"), f = +t.getAttribute("data-f");
+      d.wu[rk][+row.getAttribute("data-r")][f] = t.value;
+      if (f === 1) row.querySelector(".pl").textContent = dayPlates(t.value);
+      persist(); pace(); return;
+    }
+    if (t.hasAttribute("data-fl")) { d.fl[k][+t.getAttribute("data-fl")] = t.value; persist(); $("d-otime-" + k).textContent = openerLabel(k); return; }
+    if (t.hasAttribute("data-fp")) { d.fp[t.getAttribute("data-fp")] = t.value; persist(); renderFPOut(); return; }
+    if (t.hasAttribute("data-note")) { setNote(t.getAttribute("data-note"), t.value); return; }
+    if (t.id === "d-cnum") { var v = parseInt(t.value, 10); d.cnt[d.lift] = isNaN(v) ? null : Math.max(0, v); persist(); t.classList.toggle("set", d.cnt[d.lift] !== null); pace(); return; }
+    if (t.id === "d-rival") { d.rival = t.value; persist(); renderForecast(); return; }
+    if (t.id === "d-boardurl") {
+      d.board = t.value; persist();
+      var ext = $("d-boardext"), u = boardUrl();
+      if (u) { ext.setAttribute("href", u); ext.style.display = ""; } else { ext.style.display = "none"; }
+      return;
+    }
+  });
+
   // ---------- 1. picker + boot ----------
   function renderAll() { renderHeader(); renderFlags(); renderTrends(); renderTMs(); renderAttempts(); renderWarmups(); renderWeek(); }
 
@@ -833,6 +1453,7 @@
   var last = load("last");
   setAthlete(last);
   picker.value = athlete.id;
+  if (load("mode") === "day") setMode(true);
 })();
 </script>
 </body>
