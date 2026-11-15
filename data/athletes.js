@@ -22,7 +22,7 @@ window.ATHLETES = [
       name: "MA State Championships",
       date: "2026-11-15",
       federation: "USAPL",
-      weightClass: "75 kg",
+      weightClass: "82.5 kg, Women's Raw Open Guest (ranked by DOTS)",
       weighIn: "",
       session: "Session 3, Flight A, Platform 1 (Black)",
       boardUrl: "https://liftingcast.com/meets/mseaub8zayiu/platforms/pgc6ztb9zgvu/board",
