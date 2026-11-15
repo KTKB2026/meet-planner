@@ -582,6 +582,7 @@
           '<span><b>Federation</b> ' + orInsert(m.federation, "federation") + '</span>' +
           '<span><b>Weight class</b> ' + orInsert(m.weightClass, "weight class") + '</span>' +
           '<span><b>Weigh-in</b> ' + orInsert(m.weighIn, "weigh-in time") + '</span>' +
+          (m.session ? '<span><b>Session</b> ' + esc(m.session) + '</span>' : '') +
         '</div>' +
         (missing.length ? '<div class="missing small">Missing: ' + esc(missing.join(", ")) + '</div>' : '') +
       '</div>';
@@ -1012,7 +1013,13 @@
   function dayState() {
     var d = saved.day || (saved.day = {});
     d.att = d.att || {}; d.wu = d.wu || {}; d.fl = d.fl || {}; d.cnt = d.cnt || {};
-    d.fp = d.fp || {}; d.open = d.open || {};
+    d.open = d.open || {};
+    if (!d.fp) {
+      // Start from the flight sizes baked into the meet, if any.
+      var bfp = (athlete.meet || {}).flightPlan || {};
+      d.fp = {};
+      Object.keys(bfp).forEach(function (key) { d.fp[key] = String(bfp[key]); });
+    }
     if (!d.lift || !liftByKey(d.lift)) d.lift = C.lifts[0].key;
     if (d.collars === undefined) d.collars = C.plates.collarKgEach > 0;
     C.lifts.forEach(function (lift) {
@@ -1050,6 +1057,7 @@
     if (m.federation) bits.push(m.federation);
     if (m.weightClass) bits.push(m.weightClass);
     if (m.weighIn) bits.push("Weigh-in " + m.weighIn);
+    if (m.session) bits.push(m.session);
     bits.push("Training maxes " + C.lifts.map(function (l) { return num(tm(l.key)); }).join(" / "));
 
     $("day").innerHTML =
@@ -1077,7 +1085,7 @@
 
       '<div class="board" id="d-board"><div class="board-bar"><button data-act="board"><span id="d-boardlab">&#9654; Live board (LiftingCast)</span></button>' +
         '<a id="d-boardext" target="_blank" rel="noopener"' + (boardUrl() ? ' href="' + esc(boardUrl()) + '"' : ' style="display:none"') + '>open full</a></div>' +
-        '<div class="board-url"><input id="d-boardurl" inputmode="url" placeholder="Paste the LiftingCast board link" value="' + esc(d.board || "") + '"></div>' +
+        '<div class="board-url"><input id="d-boardurl" inputmode="url" placeholder="Paste the LiftingCast board link" value="' + esc(d.board || m.boardUrl || "") + '"></div>' +
         '<iframe id="d-boardframe" title="LiftingCast live board" loading="lazy"></iframe></div>' +
 
       '<div class="fp' + (d.fpClosed ? ' closed' : '') + '" id="d-fp"><div class="fp-head" data-act="fptoggle"><span>Flight plan</span><span class="fp-sum" id="d-fpsum"></span><span id="d-fpchev">' + (d.fpClosed ? '&#9654;' : '&#9660;') + '</span></div>' +
@@ -1110,7 +1118,7 @@
       (kind === "time" ? 'type="time"' : 'inputmode="numeric" placeholder="' + (key === "brk" ? "0" : "#") + '"') + ' value="' + esc(v) + '"></div>';
   }
   function boardUrl() {
-    var u = String(dayState().board || "").trim();
+    var u = String(dayState().board || (athlete.meet || {}).boardUrl || "").trim();
     return /^https:\/\//i.test(u) ? u : "";
   }
   function dayReference() {

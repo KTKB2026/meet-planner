@@ -127,6 +127,10 @@ Save and reload.
 - A lifter with a set attempt sheet gets `attemptSheet` in their block: for
   each lift, three rows (opener, 2nd, 3rd) of `[Safe, Moderate, Hard]`. It
   replaces the percentage options for that lifter. See Aiden.
+- Optional meet fields in `athletes.js`: `session` (text shown in the header),
+  `boardUrl` (LiftingCast board for that lifter's platform), and `flightPlan`
+  (`a` lifters before the flight, `b` in it, `c` after) to pre-fill the flight
+  plan.
 - Meet day pacing numbers are in `config.js` under `meetDay`.
 - Print handler sheet: one page with attempts and warm-ups. Flags and the
   athlete's notes are left off the sheet on purpose.
