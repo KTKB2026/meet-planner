@@ -124,6 +124,9 @@ Save and reload.
   lifter, add `attempts: { squat: [a, b, c], bench: [a, b, c], deadlift:
   [a, b, c] }` to their block in `athletes.js`. "from plan" on a lift reloads
   them.
+- A lifter with a set attempt sheet gets `attemptSheet` in their block: for
+  each lift, three rows (opener, 2nd, 3rd) of `[Safe, Moderate, Hard]`. It
+  replaces the percentage options for that lifter. See Aiden.
 - Meet day pacing numbers are in `config.js` under `meetDay`.
 - Print handler sheet: one page with attempts and warm-ups. Flags and the
   athlete's notes are left off the sheet on purpose.

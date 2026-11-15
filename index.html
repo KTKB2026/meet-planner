@@ -518,11 +518,25 @@
     return best;
   }
 
+  // An athlete can carry a set attempt sheet ("attemptSheet" in athletes.js):
+  // for each lift, three rows (opener, 2nd, 3rd) of [Safe, Moderate, Hard].
+  // When it is there it replaces the percentages for that athlete.
+  function sheetKg(liftKey, attemptIdx, tier) {
+    var row = ((athlete.attemptSheet || {})[liftKey] || [])[attemptIdx];
+    var v = row ? row[tier] : null;
+    return (typeof v === "number" && v > 0) ? v : null;
+  }
+  function optKg(liftKey, attemptIdx, tier) {
+    var v = sheetKg(liftKey, attemptIdx, tier);
+    return v !== null ? v : roundKg(tm(liftKey) * C.attempts[attemptIdx].pct[tier] / 100);
+  }
+
   // Options for one attempt. Tiers that round to the same weight merge into one group.
   function optionGroups(liftKey, attemptIdx) {
     var groups = [];
     C.attempts[attemptIdx].pct.forEach(function (pct, tier) {
-      var w = roundKg(tm(liftKey) * pct / 100);
+      var w = optKg(liftKey, attemptIdx, tier);
+      if (sheetKg(liftKey, attemptIdx, tier) !== null && tm(liftKey)) pct = Math.round(w / tm(liftKey) * 100);
       var last = groups[groups.length - 1];
       if (last && last.kg === w) { last.tiers.push(tier); last.pcts.push(pct); }
       else groups.push({ kg: w, tiers: [tier], pcts: [pct] });
@@ -534,7 +548,7 @@
     var tier = picks(liftKey)[attemptIdx];
     if (tier === null || tier === undefined) return null;
     if (tier === "r") return attemptIdx > 0 ? pickedKg(liftKey, attemptIdx - 1) : null;
-    return roundKg(tm(liftKey) * C.attempts[attemptIdx].pct[tier] / 100);
+    return optKg(liftKey, attemptIdx, tier);
   }
   function todayStr() {
     var t = new Date(), p = function (n) { return (n < 10 ? "0" : "") + n; };
