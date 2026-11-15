@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Meet planner">
+<meta name="theme-color" content="#f4f4f2">
+<title>MASS meet day planner</title>
+<style>
+  :root {
+    --bg: #f4f4f2;
+    --card: #fcfcfb;
+    --ink: #0b0b0b;
+    --ink2: #52514e;
+    --line: #dcdbd6;
+    --pick: #0b0b0b;
+    --bad: #d03b3b;
+    --bad-bg: #fbeaea;
+    --ok: #0a7a0a;
+    --topset: #eb6834;
+    --est: #2a78d6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  main { max-width: 1000px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 20px; margin: 0; }
+  h2 { font-size: 18px; margin: 28px 0 10px; }
+  h3 { font-size: 16px; margin: 0 0 8px; }
+  .muted { color: var(--ink2); }
+  .small { font-size: 13px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+
+  .topbar { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  select, input[type=number] {
+    font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;
+    background: #fff; color: var(--ink); min-height: 44px;
+  }
+
+  .meet-name { font-size: 22px; font-weight: 700; margin: 0; }
+  .facts { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 8px; }
+  .facts b { font-weight: 600; }
+  .daysout { font-size: 28px; font-weight: 700; }
+  .missing { margin-top: 10px; color: var(--bad); }
+
+  /* charts */
+  .chartwrap { position: relative; }
+  .chartwrap svg { width: 100%; height: auto; display: block; touch-action: pan-y; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--ink2); margin-bottom: 4px; }
+  .key { display: inline-block; width: 14px; height: 0; border-top: 3px solid; vertical-align: middle; margin-right: 5px; }
+  .key.dash { border-top: 2px dashed var(--ink2); }
+  .tip {
+    position: absolute; top: 0; left: 0; pointer-events: none; display: none;
+    background: var(--ink); color: #fff; font-size: 12px; padding: 6px 8px; border-radius: 6px;
+    max-width: 200px; z-index: 2;
+  }
+  .sets { list-style: none; margin: 10px 0 0; padding: 0; font-size: 14px; }
+  .sets li { padding: 6px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 52px 1fr auto; gap: 8px; }
+  .sets .d { color: var(--ink2); }
+  .sets .e { color: var(--ink2); white-space: nowrap; }
+  .sets .n { grid-column: 2 / 4; font-style: italic; }
+  .sets .mv { grid-column: 2 / 4; font-size: 13px; color: var(--ink2); }
+  .sets .mv button { min-height: 32px; }
+  .tag { font-size: 11px; font-weight: 600; border: 1px solid var(--est); color: var(--est); border-radius: 99px; padding: 1px 7px; margin-right: 6px; }
+  details { margin-top: 10px; }
+  summary { cursor: pointer; font-weight: 600; font-size: 14px; padding: 6px 0; }
+
+  /* training maxes */
+  .tmrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .tmrow input { width: 110px; font-size: 20px; font-weight: 700; }
+  .badge { font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 99px; border: 1px solid; }
+  .badge.ok { color: var(--ok); }
+  .badge.no { color: var(--bad); background: var(--bad-bg); }
+  button.link { background: none; border: 0; padding: 0; font: inherit; color: var(--est); text-decoration: underline; cursor: pointer; }
+
+  /* attempts */
+  .attempt { margin-top: 12px; }
+  .attempt .lbl { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .opts { display: flex; gap: 8px; }
+  .opt {
+    flex: 1 1 0; min-height: 64px; padding: 8px 6px; cursor: pointer;
+    border: 2px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink);
+    font: inherit; text-align: center; line-height: 1.25;
+  }
+  .opt .t { display: block; font-size: 12px; color: var(--ink2); }
+  .opt .w { display: block; font-size: 20px; font-weight: 700; }
+  .opt .l { display: block; font-size: 12px; color: var(--ink2); }
+  .opt.on { background: var(--pick); border-color: var(--pick); color: #fff; }
+  .opt.on .t, .opt.on .l { color: #d9d8d3; }
+  .attempt.bad .opt.on { background: var(--bad); border-color: var(--bad); }
+  .attempt.bad .opt.on .t, .attempt.bad .opt.on .l { color: #fff; }
+  .warn { color: var(--bad); font-size: 13px; font-weight: 600; margin-top: 6px; }
+
+  .totals { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+  .totals .card { flex: 1 1 220px; }
+  .big { font-size: 28px; font-weight: 700; }
+
+  /* warm-ups */
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th { text-align: left; font-size: 12px; color: var(--ink2); font-weight: 600; padding: 4px 6px 4px 0; }
+  td { padding: 8px 6px 8px 0; border-top: 1px solid var(--line); vertical-align: top; }
+  td.wt { font-weight: 700; white-space: nowrap; }
+  .note { margin-top: 10px; padding: 10px 12px; border-left: 4px solid var(--ink); background: #fff; font-size: 14px; }
+
+  /* flags */
+  .flags { margin-top: 12px; border: 1px solid var(--bad); border-left-width: 6px; background: var(--bad-bg); border-radius: 10px; padding: 12px 14px; }
+  .flags h3 { margin-bottom: 6px; }
+  .flags ul { margin: 0; padding: 0; list-style: none; }
+  .flags li { padding: 4px 0; font-size: 15px; }
+  .flags li b { margin-right: 6px; }
+
+  /* meet week */
+  .week { list-style: none; margin: 0; padding: 0; }
+  .week li { display: grid; grid-template-columns: 92px 1fr; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
+  .week li:first-child { border-top: 0; }
+  .week .d { font-weight: 600; }
+  .week li.today { background: #fff; outline: 2px solid var(--ink); border-radius: 6px; padding: 10px; }
+  .week li.past { color: var(--ink2); }
+
+  /* meet day mode */
+  .btn { font: inherit; min-height: 44px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); cursor: pointer; }
+  .toggle { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; min-height: 44px; padding: 8px 14px; border: 2px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; }
+  .toggle input { width: 20px; height: 20px; }
+  .toggle.on { border-color: var(--ink); }
+  .h2row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 28px 0 10px; }
+  .h2row h2 { margin: 0; }
+  .marks { display: flex; gap: 8px; margin-top: 8px; }
+  .mk { flex: 1 1 0; min-height: 44px; font: inherit; font-size: 14px; font-weight: 600; border: 2px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); cursor: pointer; }
+  .mk.good.on { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .mk.miss.on { background: var(--bad); border-color: var(--bad); color: #fff; }
+  .opt.sug { border-color: var(--est); border-style: dashed; box-shadow: 0 0 0 3px #d9e8fa; }
+  .opt.sug .t::after { content: " · suggested"; color: var(--est); font-weight: 600; }
+  .hint { font-size: 13px; font-weight: 600; color: var(--est); margin-bottom: 6px; }
+  .result { font-size: 12px; font-weight: 600; margin-left: 6px; }
+  .result.good { color: var(--ok); }
+  .result.miss { color: var(--bad); }
+
+  /* print sheet: hidden on screen, the only thing on paper */
+  #sheet { display: none; }
+  @media print {
+    @page { margin: 12mm; }
+    body { background: #fff; }
+    main { display: none; }
+    #sheet { display: block; font-size: 12px; color: #000; }
+    #sheet h1 { font-size: 20px; margin: 0; }
+    #sheet h2 { font-size: 14px; margin: 14px 0 4px; }
+    #sheet p { margin: 2px 0; }
+    #sheet table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    #sheet th, #sheet td { border: 1px solid #000; padding: 5px 6px; text-align: left; vertical-align: top; color: #000; font-size: 12px; }
+    #sheet .pick { font-size: 18px; font-weight: 700; }
+    #sheet .alts { font-size: 10px; margin-top: 2px; }
+    #sheet .box { display: inline-block; width: 11px; height: 11px; border: 1px solid #000; margin: 0 3px 0 8px; vertical-align: middle; }
+    #sheet .wu { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    #sheet .wu h3 { font-size: 12px; margin: 0 0 3px; }
+    #sheet .wu td, #sheet .wu th { padding: 3px 5px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <h1>MASS meet day planner</h1>
+    <div class="tmrow">
+      <label>Athlete <select id="picker"></select></label>
+      <button class="btn" id="printBtn">Print handler sheet</button>
+    </div>
+  </div>
+
+  <section id="header"></section>
+  <section id="flags"></section>
+
+  <h2>Trends since <span id="histStart"></span></h2>
+  <p class="muted small" id="histNote"></p>
+  <section id="trends" class="grid"></section>
+
+  <h2>Training maxes</h2>
+  <p class="muted small">Edit a number and everything below recalculates. Edits save on this device only.</p>
+  <section id="tms" class="grid"></section>
+
+  <div class="h2row">
+    <h2>Attempt selection</h2>
+    <label class="toggle" id="meetDayLbl"><input type="checkbox" id="meetDay"> Meet day mode</label>
+  </div>
+  <p class="muted small" id="attHelp"></p>
+  <section id="attempts" class="grid"></section>
+  <section id="totals" class="totals"></section>
+
+  <h2>Warm-ups</h2>
+  <section id="warmups" class="grid"></section>
+  <div class="note" id="timing"></div>
+
+  <h2>Meet week plan</h2>
+  <section id="week" class="card"></section>
+</main>
+<section id="sheet"></section>
+
+<script src="data/config.js"></script>
+<script src="data/athletes.js"></script>
+<!-- Private notes and flags. Only exists on Kyle's Mac. Missing is fine. -->
+<script src="data/private.js"></script>
+<script>
+(function () {
+  "use strict";
+  var C = window.CONFIG, ATHLETES = window.ATHLETES || [];
+  var $ = function (id) { return document.getElementById(id); };
+  var KEY = "meetplanner:v1:";
+  var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+  if (!C || !ATHLETES.length) {
+    $("header").innerHTML = '<p class="card">Could not load data/config.js or data/athletes.js. Check both files for a typo.</p>';
+    return;
+  }
+
+  // Fold in data/private.js when it is there (Kyle's Mac only).
+  var PRIV = window.PRIVATE || {};
+  ATHLETES.forEach(function (a) {
+    var p = PRIV[a.id];
+    if (!p) return;
+    if (p.fullName) a.name = p.fullName;
+    if (p.legacyId) a._legacyId = p.legacyId;
+    if (p.historyNote) a.historyNote = p.historyNote;
+    if (p.flags) a.flags = p.flags;
+    Object.keys(p.priorBestNotes || {}).forEach(function (k) {
+      if (a.priorBests && a.priorBests[k]) a.priorBests[k].note = p.priorBestNotes[k];
+    });
+    Object.keys(p.notes || {}).forEach(function (k) {
+      var parts = k.split("|");
+      ((a.log || {})[parts[0]] || []).forEach(function (e) { if (e.date === parts[1]) e.note = p.notes[k]; });
+    });
+  });
+
+  if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
+    try { navigator.serviceWorker.register("sw.js").catch(function () {}); } catch (e) {}
+  }
+
+  // ---------- storage (page still works if storage is blocked) ----------
+  function load(key) {
+    try { var s = window.localStorage.getItem(KEY + key); return s ? JSON.parse(s) : null; }
+    catch (e) { return null; }
+  }
+  function save(key, val) {
+    try { window.localStorage.setItem(KEY + key, JSON.stringify(val)); } catch (e) {}
+  }
+
+  // ---------- helpers ----------
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function parseDate(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function shortDate(s) { var d = parseDate(s); return MONTHS[d.getMonth()] + " " + d.getDate(); }
+  function longDate(s) { var d = parseDate(s); return DAYS[d.getDay()] + ", " + MONTHS[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear(); }
+  function roundTo(x, inc) { return Math.floor(x / inc + 0.5 + 1e-9) * inc; }
+  function roundKg(x) { return roundTo(x, C.roundingKg); }
+  function num(x) { return String(Math.round(x * 100) / 100); }
+  function lb(kg) { return Math.round(kg * C.kgToLb); }
+  function epley(kg, reps) { return reps <= 1 ? kg : kg * (1 + reps / 30); }
+  function orInsert(val, label) { return val ? esc(val) : '<span class="muted">[Insert ' + label + ']</span>'; }
+
+  // ---------- state ----------
+  var athlete, saved;
+
+  function setAthlete(id) {
+    athlete = ATHLETES.filter(function (a) { return a.id === id; })[0] || ATHLETES[0];
+    saved = load(athlete.id) || (athlete._legacyId && load(athlete._legacyId)) || {};
+    saved.tm = saved.tm || {};
+    saved.picks = saved.picks || {};
+    saved.marks = saved.marks || {};
+    saved.moved = saved.moved || {};
+    save("last", athlete.id);
+    renderAll();
+  }
+  function persist() { save(athlete.id, saved); }
+
+  function tm(liftKey) {
+    var v = saved.tm[liftKey];
+    if (typeof v === "number" && v > 0) return v;
+    var f = athlete.trainingMaxes && athlete.trainingMaxes[liftKey];
+    return f ? f.kg : 0;
+  }
+  function picks(liftKey) {
+    var p = saved.picks[liftKey];
+    if (!p) { p = saved.picks[liftKey] = [null, null, null]; }
+    return p;
+  }
+
+  // Sets logged under the wrong exercise name can be moved between a lift's
+  // main list and its other list (config.js "others"). A move is saved per set.
+  function moveKey(listKey, e) { return listKey + "|" + e.date + "|" + e.kg; }
+  function listName(lift, listKey) {
+    if (listKey === lift.key) return lift.name;
+    var o = (lift.others || []).filter(function (x) { return x.key === listKey; })[0];
+    return o ? o.name : listKey;
+  }
+  function listEntries(lift, listKey) {
+    var log = athlete.log || {}, others = lift.others || [], out = [];
+    var take = function (src, wantMoved) {
+      (log[src] || []).forEach(function (e) {
+        if (!!saved.moved[moveKey(src, e)] !== wantMoved) return;
+        out.push({ date: e.date, kg: e.kg, reps: e.reps, text: e.text, note: e.note, _src: src, _moved: wantMoved });
+      });
+    };
+    take(listKey, false);
+    if (listKey === lift.key) others.forEach(function (o) { take(o.key, true); });
+    else if (others.length && others[0].key === listKey) take(lift.key, true);
+    return out
+      .filter(function (e) { return !athlete.historyStart || e.date >= athlete.historyStart; })
+      .sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+  }
+  // Heaviest single in a lift's main list (after any moves). Latest date wins a tie.
+  function heaviestSingle(lift) {
+    var best = null;
+    listEntries(lift, lift.key).forEach(function (e) {
+      if (e.reps <= 1 && (!best || e.kg >= best.kg)) best = e;
+    });
+    return best;
+  }
+
+  // Options for one attempt. Tiers that round to the same weight merge into one group.
+  function optionGroups(liftKey, attemptIdx) {
+    var groups = [];
+    C.attempts[attemptIdx].pct.forEach(function (pct, tier) {
+      var w = roundKg(tm(liftKey) * pct / 100);
+      var last = groups[groups.length - 1];
+      if (last && last.kg === w) { last.tiers.push(tier); last.pcts.push(pct); }
+      else groups.push({ kg: w, tiers: [tier], pcts: [pct] });
+    });
+    return groups;
+  }
+  // A pick is a tier number (0, 1, 2) or "r" = repeat the weight before it.
+  function pickedKg(liftKey, attemptIdx) {
+    var tier = picks(liftKey)[attemptIdx];
+    if (tier === null || tier === undefined) return null;
+    if (tier === "r") return attemptIdx > 0 ? pickedKg(liftKey, attemptIdx - 1) : null;
+    return roundKg(tm(liftKey) * C.attempts[attemptIdx].pct[tier] / 100);
+  }
+  // Meet day marks per attempt: "fast", "grind", "miss", or null.
+  function marks(liftKey) {
+    var m = saved.marks[liftKey];
+    if (!m) { m = saved.marks[liftKey] = [null, null, null]; }
+    return m;
+  }
+  function todayStr() {
+    var t = new Date(), p = function (n) { return (n < 10 ? "0" : "") + n; };
+    return t.getFullYear() + "-" + p(t.getMonth() + 1) + "-" + p(t.getDate());
+  }
+
+  // ---------- 2. meet header ----------
+  function renderHeader() {
+    var m = athlete.meet || {};
+    var days = "";
+    if (m.date) {
+      var t = new Date(); t = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+      var n = Math.round((parseDate(m.date) - t) / 86400000);
+      days = n > 1 ? n + " days out" : n === 1 ? "1 day out" : n === 0 ? "Meet day" : Math.abs(n) + " days ago";
+    }
+    var missing = [];
+    if (!m.name) missing.push("meet name");
+    if (!m.date) missing.push("meet date");
+    if (!m.federation) missing.push("federation");
+    if (!m.weightClass) missing.push("weight class");
+    if (!m.weighIn) missing.push("weigh-in time");
+
+    $("header").innerHTML =
+      '<div class="card" style="margin-top:14px">' +
+        '<div class="topbar"><div>' +
+          '<p class="meet-name">' + esc(athlete.name) + '</p>' +
+          '<div>' + orInsert(m.name, "meet name") + '</div>' +
+        '</div><div class="daysout">' + esc(days) + '</div></div>' +
+        '<div class="facts">' +
+          '<span><b>Date</b> ' + (m.date ? esc(longDate(m.date)) : orInsert("", "meet date")) + '</span>' +
+          '<span><b>Federation</b> ' + orInsert(m.federation, "federation") + '</span>' +
+          '<span><b>Weight class</b> ' + orInsert(m.weightClass, "weight class") + '</span>' +
+          '<span><b>Weigh-in</b> ' + orInsert(m.weighIn, "weigh-in time") + '</span>' +
+        '</div>' +
+        (missing.length ? '<div class="missing small">Missing: ' + esc(missing.join(", ")) + '</div>' : '') +
+      '</div>';
+  }
+
+  // ---------- 3. trends ----------
+  function chartSvg(entries, best, x0, x1) {
+    var W = 340, H = 190, L = 34, R = 10, T = 12, B = 22;
+    var vals = [];
+    entries.forEach(function (e) { vals.push(e.kg, epley(e.kg, e.reps)); });
+    if (best) vals.push(best.kg);
+    var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+    var step = [5, 10, 20, 25, 50, 100].filter(function (s) { return (hi - lo) / s <= 5; })[0] || 100;
+    lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step;
+    if (hi === lo) hi = lo + step;
+    var X = function (d) { return L + (d - x0) / (x1 - x0) * (W - L - R); };
+    var Y = function (v) { return T + (hi - v) / (hi - lo) * (H - T - B); };
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Top sets and estimated max over time">';
+
+    for (var v = lo; v <= hi + 1e-9; v += step) {
+      s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(v) + '" y2="' + Y(v) + '" stroke="#e6e5e0" stroke-width="1"/>' +
+           '<text x="' + (L - 5) + '" y="' + (Y(v) + 4) + '" text-anchor="end" font-size="10" fill="#52514e">' + v + '</text>';
+    }
+    var m = new Date(x0.getFullYear(), x0.getMonth() + 1, 1);
+    while (m <= x1) {
+      s += '<text x="' + X(m) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="10" fill="#52514e">' + MONTHS[m.getMonth()] + '</text>' +
+           '<line x1="' + X(m) + '" x2="' + X(m) + '" y1="' + (H - B) + '" y2="' + (H - B + 4) + '" stroke="#b9b8b2"/>';
+      m = new Date(m.getFullYear(), m.getMonth() + 1, 1);
+    }
+    if (best) {
+      s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(best.kg) + '" y2="' + Y(best.kg) + '" stroke="#52514e" stroke-width="1.5" stroke-dasharray="5 4"/>' +
+           '<text x="' + (L + 4) + '" y="' + (Y(best.kg) - 4) + '" font-size="10" fill="#52514e">Prior best ' + num(best.kg) + ' (' + esc(shortDate(best.date)) + ')</text>';
+    }
+    var pts = entries.map(function (e) {
+      var x = X(parseDate(e.date));
+      return { x: x, top: Y(e.kg), est: Y(epley(e.kg, e.reps)) };
+    });
+    var path = function (k) { return pts.map(function (p, i) { return (i ? "L" : "M") + p.x.toFixed(1) + " " + p[k].toFixed(1); }).join(" "); };
+    s += '<path d="' + path("est") + '" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>';
+    s += '<path d="' + path("top") + '" fill="none" stroke="#eb6834" stroke-width="2" stroke-linejoin="round"/>';
+    pts.forEach(function (p) {
+      s += '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.est.toFixed(1) + '" r="3" fill="#2a78d6" stroke="#fcfcfb" stroke-width="1.5"/>' +
+           '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.top.toFixed(1) + '" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="1.5"/>';
+    });
+    s += '<line class="cross" x1="0" x2="0" y1="' + T + '" y2="' + (H - B) + '" stroke="#0b0b0b" stroke-width="1" visibility="hidden"/>';
+    return { svg: s + '</svg>', xs: pts.map(function (p) { return p.x; }), W: W };
+  }
+
+  function setList(entries, lift, listKey) {
+    if (!entries.length) return '<p class="muted small">No sets logged.</p>';
+    var canMove = lift.others && lift.others.length;
+    return '<ul class="sets">' + entries.map(function (e) {
+      var mv = "";
+      if (canMove) {
+        var label = e._moved ? "Undo"
+          : listKey === lift.key ? "Move to " + lift.others[0].name
+          : "Count as " + lift.name;
+        mv = '<span class="mv">' +
+          (e._moved ? '<span class="tag">Moved</span>Logged as ' + esc(listName(lift, e._src)) + '. ' : '') +
+          '<button class="link" data-move="' + esc(moveKey(e._src, e)) + '">' + esc(label) + '</button></span>';
+      }
+      return '<li><span class="d">' + esc(shortDate(e.date)) + '</span><span>' + esc(e.text) + '</span>' +
+        '<span class="e">est ' + num(Math.round(epley(e.kg, e.reps) * 10) / 10) + '</span>' +
+        (e.note ? '<span class="n">"' + esc(e.note) + '"</span>' : '') + mv + '</li>';
+    }).join("") + '</ul>';
+  }
+
+  function renderTrends() {
+    $("histStart").textContent = athlete.historyStart ? shortDate(athlete.historyStart) : "[Insert history start]";
+    $("histNote").textContent = athlete.historyNote || "";
+    var log = athlete.log || {};
+    var x0 = parseDate(athlete.historyStart);
+    var x1 = athlete.meet && athlete.meet.date ? parseDate(athlete.meet.date) : new Date();
+    var html = "";
+    // Keep fold-outs open or closed across a redraw.
+    var wasOpen = {};
+    Array.prototype.forEach.call(document.querySelectorAll("#trends details[data-d]"), function (d) {
+      wasOpen[d.getAttribute("data-d")] = d.open;
+    });
+    var openAttr = function (key, dflt) { return (key in wasOpen ? wasOpen[key] : dflt) ? " open" : ""; };
+    C.lifts.forEach(function (lift) {
+      var entries = listEntries(lift, lift.key);
+      var best = athlete.priorBests && athlete.priorBests[lift.key];
+      html += '<div class="card"><h3>' + esc(lift.name) + '</h3>';
+      if (entries.length) {
+        html += '<div class="legend"><span><span class="key" style="border-color:#eb6834"></span>Top set (kg)</span>' +
+          '<span><span class="key" style="border-color:#2a78d6"></span>Estimated max</span>' +
+          (best ? '<span><span class="key dash"></span>Prior best</span>' : '') + '</div>' +
+          '<div class="chartwrap" data-lift="' + lift.key + '">' + chartSvg(entries, best, x0, x1).svg + '<div class="tip"></div></div>';
+      }
+      if (best) {
+        html += '<p class="small muted" style="margin:8px 0 0">Prior best: ' + num(best.kg) + ' on ' + esc(shortDate(best.date)) +
+          (best.note ? '. ' + esc(best.note) : '') + '</p>';
+      } else {
+        html += '<p class="small muted" style="margin:8px 0 0">[Insert prior best]</p>';
+      }
+      html += '<details data-d="' + lift.key + '"' + openAttr(lift.key, true) + '><summary>Top sets (' + entries.length + ')</summary>' + setList(entries, lift, lift.key) + '</details>';
+      (lift.others || []).forEach(function (o) {
+        var oe = listEntries(lift, o.key);
+        if (!oe.length && !(log[o.key] || []).length) return;
+        html += '<details data-d="' + o.key + '"' + openAttr(o.key, false) + '><summary>' + esc(o.name) + ' (' + oe.length + ')</summary>' + setList(oe, lift, o.key) + '</details>';
+      });
+      html += '</div>';
+    });
+    $("trends").innerHTML = html;
+
+    // hover / tap: show the nearest logged day
+    Array.prototype.forEach.call(document.querySelectorAll(".chartwrap"), function (wrap) {
+      var key = wrap.getAttribute("data-lift");
+      var entries = listEntries(C.lifts.filter(function (l) { return l.key === key; })[0], key);
+      var info = chartSvg(entries, null, x0, x1);
+      var svg = wrap.querySelector("svg"), tip = wrap.querySelector(".tip"), cross = wrap.querySelector(".cross");
+      function move(ev) {
+        var r = svg.getBoundingClientRect();
+        var vx = (ev.clientX - r.left) / r.width * info.W, bestI = 0;
+        info.xs.forEach(function (x, i) { if (Math.abs(x - vx) < Math.abs(info.xs[bestI] - vx)) bestI = i; });
+        var e = entries[bestI], px = info.xs[bestI] / info.W * r.width;
+        cross.setAttribute("x1", info.xs[bestI]); cross.setAttribute("x2", info.xs[bestI]);
+        cross.setAttribute("visibility", "visible");
+        tip.innerHTML = '<b>' + esc(shortDate(e.date)) + '</b><br>' + esc(e.text) +
+          '<br>Est max ' + num(Math.round(epley(e.kg, e.reps) * 10) / 10) + (e.note ? '<br>"' + esc(e.note) + '"' : '');
+        tip.style.display = "block";
+        var left = px + 10;
+        if (left + tip.offsetWidth > r.width) left = Math.max(0, px - tip.offsetWidth - 10);
+        tip.style.left = left + "px";
+      }
+      function hide() { tip.style.display = "none"; cross.setAttribute("visibility", "hidden"); }
+      svg.addEventListener("pointermove", move);
+      svg.addEventListener("pointerdown", move);
+      svg.addEventListener("pointerleave", hide);
+    });
+  }
+
+  $("trends").addEventListener("click", function (ev) {
+    var key = ev.target.getAttribute && ev.target.getAttribute("data-move");
+    if (!key) return;
+    if (saved.moved[key]) delete saved.moved[key]; else saved.moved[key] = true;
+    persist();
+    renderTrends(); renderTMs();
+  });
+
+  // ---------- 4. training maxes ----------
+  function tmBestHtml(lift) {
+    var b = heaviestSingle(lift), cur = tm(lift.key);
+    if (!b) return "";
+    var s = 'Heaviest logged single: ' + num(b.kg) + ' on ' + esc(shortDate(b.date)) + '.';
+    if (b.kg > cur) {
+      s += ' <b style="color:var(--bad)">Above this training max.</b> ' +
+        '<button class="link" data-usetm="' + lift.key + '" data-kg="' + b.kg + '">Use ' + num(b.kg) + '</button>';
+    }
+    return s;
+  }
+  function renderTMs() {
+    var html = "";
+    C.lifts.forEach(function (lift) {
+      var f = (athlete.trainingMaxes && athlete.trainingMaxes[lift.key]) || null;
+      var cur = tm(lift.key);
+      var edited = f && cur !== f.kg;
+      html += '<div class="card"><h3>' + esc(lift.name) + '</h3><div class="tmrow">' +
+        '<input type="number" inputmode="decimal" step="' + C.roundingKg + '" min="0" value="' + (cur || "") + '" data-tm="' + lift.key + '" aria-label="' + esc(lift.name) + ' training max in kg">' +
+        '<span>kg</span><span class="muted" data-tmlb="' + lift.key + '">' + (cur ? lb(cur) + " lb" : "") + '</span>' +
+        (f ? (f.approved
+            ? '<span class="badge ok">Approved' + (f.approvedOn ? " " + esc(shortDate(f.approvedOn)) : "") + '</span>'
+            : '<span class="badge no">Proposed, not approved</span>')
+          : '<span class="badge no">[Insert training max]</span>') +
+        '</div>' +
+        (f && f.reason ? '<p class="small muted" style="margin:8px 0 0">' + esc(f.reason) + '</p>' : '') +
+        '<p class="small" style="margin:6px 0 0" data-tmedit="' + lift.key + '">' +
+          (edited ? 'Edited here. File says ' + num(f.kg) + '. <button class="link" data-reset="' + lift.key + '">Reset</button>' : '') + '</p>' +
+        '<p class="small muted" style="margin:6px 0 0" data-tmbest="' + lift.key + '">' + tmBestHtml(lift) + '</p>' +
+        '</div>';
+    });
+    $("tms").innerHTML = html;
+  }
+
+  $("tms").addEventListener("input", function (ev) {
+    var key = ev.target.getAttribute("data-tm");
+    if (!key) return;
+    var v = parseFloat(ev.target.value);
+    var f = athlete.trainingMaxes && athlete.trainingMaxes[key];
+    if (v > 0 && !(f && v === f.kg)) saved.tm[key] = v; else delete saved.tm[key];
+    persist();
+    var cur = tm(key);
+    document.querySelector('[data-tmlb="' + key + '"]').textContent = cur ? lb(cur) + " lb" : "";
+    document.querySelector('[data-tmedit="' + key + '"]').innerHTML = (f && cur !== f.kg)
+      ? 'Edited here. File says ' + num(f.kg) + '. <button class="link" data-reset="' + key + '">Reset</button>' : '';
+    document.querySelector('[data-tmbest="' + key + '"]').innerHTML =
+      tmBestHtml(C.lifts.filter(function (l) { return l.key === key; })[0]);
+    renderAttempts(); renderWarmups();
+  });
+  $("tms").addEventListener("click", function (ev) {
+    var use = ev.target.getAttribute("data-usetm");
+    if (use) {
+      var kg = parseFloat(ev.target.getAttribute("data-kg"));
+      var ff = athlete.trainingMaxes && athlete.trainingMaxes[use];
+      if (ff && ff.kg === kg) delete saved.tm[use]; else saved.tm[use] = kg;
+      persist();
+      renderTMs(); renderAttempts(); renderWarmups();
+      return;
+    }
+    var key = ev.target.getAttribute("data-reset");
+    if (!key) return;
+    delete saved.tm[key]; persist();
+    renderTMs(); renderAttempts(); renderWarmups();
+  });
+
+  // ---------- 5. attempts ----------
+  function renderAttempts() {
+    var meetDay = !!saved.meetDay, html = "";
+    $("meetDay").checked = meetDay;
+    $("meetDayLbl").className = "toggle" + (meetDay ? " on" : "");
+    $("attHelp").textContent = meetDay
+      ? "Mark each attempt after the lift. The next attempt shows a suggestion. Tap a mark again to clear it."
+      : "Tap one option per attempt. Tap again to clear it.";
+
+    C.lifts.forEach(function (lift) {
+      var p = picks(lift.key), mk = marks(lift.key);
+      // A repeat only makes sense right after a miss.
+      for (var j = 1; j < p.length; j++) { if (p[j] === "r" && mk[j - 1] !== "miss") p[j] = null; }
+
+      html += '<div class="card"><h3>' + esc(lift.name) + ' <span class="muted small">of ' + num(tm(lift.key)) + ' kg</span></h3>';
+      if (!tm(lift.key)) { html += '<p class="muted small">Set a training max first.</p></div>'; return; }
+      C.attempts.forEach(function (att, i) {
+        var mine = p[i];
+        var kg = pickedKg(lift.key, i), prev = i > 0 ? pickedKg(lift.key, i - 1) : null;
+        var prevMark = i > 0 ? mk[i - 1] : null, prevMiss = prevMark === "miss";
+        var bad = kg !== null && prev !== null &&
+          (prevMiss ? kg < prev - 1e-9 : kg - prev < C.minJumpKg - 1e-9);
+
+        // Suggestion from the result of the attempt before this one.
+        var sug = [], hint = "";
+        if (meetDay && prevMark && prev !== null && !mk[i]) {
+          if (prevMark === "fast") { sug = [1, 2]; hint = "Fast make. Go " + C.attemptOptions[1] + " or " + C.attemptOptions[2] + "."; }
+          if (prevMark === "grind") { sug = [0]; hint = "Grinder. Go " + C.attemptOptions[0] + "."; }
+          if (prevMiss) { sug = [0, "r"]; hint = "Miss. Repeat " + num(prev) + " or go " + C.attemptOptions[0] + "."; }
+        }
+        var res = mk[i] && kg !== null
+          ? '<span class="result ' + (mk[i] === "miss" ? "miss" : "good") + '">' + (mk[i] === "miss" ? "Miss" : mk[i] === "fast" ? "Good, fast" : "Good, grinder") + '</span>' : '';
+
+        html += '<div class="attempt' + (bad ? ' bad' : '') + '"><div class="lbl">' + esc(att.name) + res + '</div>' +
+          (hint ? '<div class="hint">' + esc(hint) + '</div>' : '') + '<div class="opts">';
+        if (meetDay && prevMiss && prev !== null) {
+          var onR = mine === "r";
+          html += '<button class="opt' + (onR ? ' on' : '') + (sug.indexOf("r") !== -1 ? ' sug' : '') + '" aria-pressed="' + onR + '" data-lift="' + lift.key + '" data-att="' + i + '" data-tier="r">' +
+            '<span class="t">Repeat</span><span class="w">' + num(prev) + '</span><span class="l">' + lb(prev) + ' lb</span></button>';
+        }
+        optionGroups(lift.key, i).forEach(function (g) {
+          var on = typeof mine === "number" && g.tiers.indexOf(mine) !== -1;
+          var isSug = g.tiers.some(function (t) { return sug.indexOf(t) !== -1; });
+          html += '<button class="opt' + (on ? ' on' : '') + (isSug ? ' sug' : '') + '" aria-pressed="' + on + '" data-lift="' + lift.key + '" data-att="' + i + '" data-tier="' + g.tiers[0] + '">' +
+            '<span class="t">' + g.tiers.map(function (t) { return esc(C.attemptOptions[t]); }).join(" / ") + '</span>' +
+            '<span class="w">' + num(g.kg) + '</span>' +
+            '<span class="l">' + lb(g.kg) + ' lb · ' + g.pcts.join("/") + '%</span></button>';
+        });
+        html += '</div>';
+        if (bad) {
+          html += '<div class="warn">' + (prevMiss
+            ? 'Can\'t go below the ' + esc(C.attempts[i - 1].name.toLowerCase()) + ' (' + num(prev) + ').'
+            : 'Needs to be at least ' + num(C.minJumpKg) + ' kg over the ' + esc(C.attempts[i - 1].name.toLowerCase()) + ' (' + num(prev) + ').') + '</div>';
+        }
+        if (meetDay && kg !== null) {
+          var mb = function (val, cls, label) {
+            return '<button class="mk ' + cls + (mk[i] === val ? ' on' : '') + '" aria-pressed="' + (mk[i] === val) + '" data-lift="' + lift.key + '" data-att="' + i + '" data-mark="' + val + '">' + label + '</button>';
+          };
+          html += '<div class="marks">' + mb("fast", "good", "Good, fast") + mb("grind", "good", "Good, grinder") + mb("miss", "miss", "Miss") + '</div>';
+        }
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+    $("attempts").innerHTML = html;
+    renderTotals();
+    renderSheet();
+  }
+
+  $("attempts").addEventListener("click", function (ev) {
+    var b = ev.target.closest ? ev.target.closest(".opt, .mk") : null;
+    if (!b) return;
+    var key = b.getAttribute("data-lift"), i = +b.getAttribute("data-att");
+    var mark = b.getAttribute("data-mark");
+    if (mark) {
+      var mk = marks(key);
+      mk[i] = mk[i] === mark ? null : mark;
+    } else {
+      var raw = b.getAttribute("data-tier"), p = picks(key), before = p[i];
+      if (raw === "r") {
+        p[i] = p[i] === "r" ? null : "r";
+      } else {
+        var tier = +raw;
+        var groupTiers = optionGroups(key, i).filter(function (g) { return g.tiers.indexOf(tier) !== -1; })[0].tiers;
+        p[i] = (typeof p[i] === "number" && groupTiers.indexOf(p[i]) !== -1) ? null : tier;
+      }
+      // A mark belongs to the weight it was made on. New weight, clear the mark.
+      if (p[i] !== before) marks(key)[i] = null;
+    }
+    persist();
+    renderAttempts(); renderWarmups();
+  });
+
+  $("meetDay").addEventListener("change", function () {
+    saved.meetDay = $("meetDay").checked;
+    persist();
+    renderAttempts();
+  });
+
+  function renderTotals() {
+    function total(attIdx) {
+      var sum = 0, missing = [];
+      C.lifts.forEach(function (lift) {
+        var kg = pickedKg(lift.key, attIdx);
+        if (kg === null) missing.push(lift.name.toLowerCase()); else sum += kg;
+      });
+      return missing.length
+        ? '<div class="big muted">--</div><div class="small muted">Pick a ' + esc(C.attempts[attIdx].name) + ' for: ' + esc(missing.join(", ")) + '</div>'
+        : '<div class="big">' + num(sum) + ' kg</div><div class="small muted">' + lb(sum) + ' lb</div>';
+    }
+    var html =
+      '<div class="card"><h3>Projected total</h3><div class="small muted">Selected 3rds</div>' + total(2) + '</div>' +
+      '<div class="card"><h3>Made 2nds total</h3><div class="small muted">If the selected 2nds are the last makes</div>' + total(1) + '</div>';
+    if (saved.meetDay) {
+      var sum = 0, parts = [];
+      C.lifts.forEach(function (lift) {
+        var best = 0;
+        marks(lift.key).forEach(function (m, i) {
+          var kg = pickedKg(lift.key, i);
+          if ((m === "fast" || m === "grind") && kg !== null && kg > best) best = kg;
+        });
+        sum += best;
+        parts.push(lift.name + " " + (best ? num(best) : "no make yet"));
+      });
+      html += '<div class="card"><h3>Total so far</h3><div class="small muted">Best good lift on each</div>' +
+        '<div class="big">' + num(sum) + ' kg</div><div class="small muted">' + lb(sum) + ' lb · ' + esc(parts.join(", ")) + '</div></div>';
+    }
+    $("totals").innerHTML = html;
+  }
+
+  // ---------- 7. meet week ----------
+  function renderWeek() {
+    var wk = athlete.meetWeek || [], today = todayStr();
+    $("week").innerHTML = wk.length
+      ? '<ul class="week">' + wk.map(function (d) {
+          var dt = parseDate(d.date);
+          return '<li class="' + (d.date === today ? "today" : d.date < today ? "past" : "") + '"><span class="d">' +
+            DAYS[dt.getDay()] + " " + esc(shortDate(d.date)) + (d.date === today ? '<br><span class="small">Today</span>' : '') +
+            '</span><span>' + esc(d.plan) + '</span></li>';
+        }).join("") + '</ul>'
+      : '<p class="muted" style="margin:0">[Insert meet week plan]</p>';
+  }
+
+  // ---------- 8. flags ----------
+  function renderFlags() {
+    var f = athlete.flags || [];
+    $("flags").innerHTML = f.length
+      ? '<div class="flags"><h3>Flags</h3><ul>' + f.map(function (x) {
+          return '<li><b>' + esc(x.type) + ':</b>' + esc(x.text) + '</li>';
+        }).join("") + '</ul></div>'
+      : '';
+  }
+
+  // ---------- 9. print sheet (attempts + warm-ups, one page) ----------
+  function renderSheet() {
+    var m = athlete.meet || {};
+    var ins = function (v, label) { return v ? esc(v) : "[Insert " + label + "]"; };
+    var h = '<h1>' + esc(athlete.name) + '</h1>' +
+      '<p>' + ins(m.name, "meet name") + ' · ' + (m.date ? esc(longDate(m.date)) : "[Insert meet date]") + '</p>' +
+      '<p>Federation: ' + ins(m.federation, "federation") + ' · Weight class: ' + ins(m.weightClass, "weight class") +
+      ' · Weigh-in: ' + ins(m.weighIn, "weigh-in time") + '</p>';
+
+    h += '<h2>Attempts (kg)</h2><table><thead><tr><th>Lift</th>' +
+      C.attempts.map(function (a) { return '<th>' + esc(a.name) + '</th>'; }).join("") + '</tr></thead><tbody>';
+    var sum = 0, all = true;
+    C.lifts.forEach(function (lift) {
+      h += '<tr><th>' + esc(lift.name) + '</th>';
+      C.attempts.forEach(function (a, i) {
+        var kg = pickedKg(lift.key, i);
+        if (i === C.attempts.length - 1) { if (kg === null) all = false; else sum += kg; }
+        h += '<td><div class="pick">' + (kg !== null ? num(kg) + ' <span style="font-size:11px;font-weight:400">' + lb(kg) + ' lb</span>' : '______') +
+          '</div><div class="alts">' + optionGroups(lift.key, i).map(function (g) {
+            return g.tiers.map(function (t) { return esc(C.attemptOptions[t]); }).join("/") + " " + num(g.kg);
+          }).join(" · ") + '</div><div class="alts"><span class="box" style="margin-left:0"></span>Good<span class="box"></span>Miss</div></td>';
+      });
+      h += '</tr>';
+    });
+    h += '</tbody></table><p style="margin-top:6px"><b>Projected total:</b> ' + (all ? num(sum) + ' kg (' + lb(sum) + ' lb)' : '______') + '</p>';
+
+    h += '<h2>Warm-ups (plates per side, ' + num(C.plates.barKg) + ' kg bar' +
+      (C.plates.collarKgEach > 0 ? ', ' + num(C.plates.collarKgEach) + ' kg collars' : '') + ')</h2><div class="wu">';
+    C.lifts.forEach(function (lift) {
+      var w = C.warmups[lift.key], opener = pickedKg(lift.key, 0);
+      h += '<div><h3>' + esc(lift.name) + (opener !== null ? ' · opener ' + num(opener) : '') + '</h3>';
+      if (!w || opener === null) { h += '<p>No opener picked.</p></div>'; return; }
+      h += '<table><thead><tr><th>kg</th><th>Reps</th><th>Per side</th></tr></thead><tbody>';
+      if (w.barReps > 0) h += '<tr><td>' + num(C.plates.barKg) + '</td><td>×' + w.barReps + '</td><td>Empty bar</td></tr>';
+      w.steps.forEach(function (s) {
+        var kg = roundKg(opener * s.pct / 100);
+        h += '<tr><td><b>' + num(kg) + '</b></td><td>×' + s.reps + '</td><td>' + esc(plateText(kg)) + '</td></tr>';
+      });
+      h += '</tbody></table>' + (w.note ? '<p>' + esc(w.note) + '</p>' : '') + '</div>';
+    });
+    h += '</div><p style="margin-top:10px"><b>Timing:</b> ' + esc(C.warmupTimingNote) + '</p>';
+    $("sheet").innerHTML = h;
+  }
+  $("printBtn").addEventListener("click", function () { window.print(); });
+
+  // ---------- 6. warm-ups ----------
+  function plateText(kg) {
+    var P = C.plates, bar = P.barKg, collars = P.collarKgEach * 2;
+    if (kg <= bar + 1e-9) return "Empty bar";
+    var load = kg - bar;
+    var useCollars = collars > 0 && load >= collars - 1e-9;
+    var side = (load - (useCollars ? collars : 0)) / 2, out = [];
+    P.availableKg.forEach(function (p) {
+      while (side >= p - 1e-9) { out.push(num(p)); side -= p; }
+    });
+    var txt = out.length ? out.join(", ") : "";
+    if (useCollars) txt += (txt ? " + " : "") + "collar";
+    else if (collars > 0) txt += " (no collars)";
+    if (side > 1e-6) txt += " (" + num(side) + " short per side)";
+    return txt;
+  }
+
+  function renderWarmups() {
+    var html = "";
+    C.lifts.forEach(function (lift) {
+      var w = C.warmups[lift.key], opener = pickedKg(lift.key, 0);
+      html += '<div class="card"><h3>' + esc(lift.name) + '</h3>';
+      if (!w) { html += '<p class="muted small">No warm-up plan in config.js.</p></div>'; return; }
+      if (opener === null) { html += '<p class="muted small">Pick an opener to build warm-ups.</p></div>'; return; }
+      html += '<p class="small muted" style="margin:0 0 6px">Opener ' + num(opener) + ' kg (' + lb(opener) + ' lb)</p>' +
+        '<table><thead><tr><th>Weight</th><th>Reps</th><th>Per side</th></tr></thead><tbody>';
+      if (w.barReps > 0) html += '<tr><td class="wt">' + num(C.plates.barKg) + ' kg</td><td>×' + w.barReps + '</td><td>Empty bar</td></tr>';
+      w.steps.forEach(function (s) {
+        var kg = roundKg(opener * s.pct / 100);
+        html += '<tr><td class="wt">' + num(kg) + ' kg <span class="muted small" style="font-weight:400">' + lb(kg) + ' lb</span></td><td>×' + s.reps +
+          '</td><td>' + esc(plateText(kg)) + ' <span class="muted small">' + s.pct + '%</span></td></tr>';
+      });
+      html += '</tbody></table>';
+      if (w.note) html += '<div class="note">' + esc(w.note) + '</div>';
+      html += '</div>';
+    });
+    $("warmups").innerHTML = html;
+    $("timing").textContent = C.warmupTimingNote + " Plates per side on a " + num(C.plates.barKg) + " kg bar" +
+      (C.plates.collarKgEach > 0 ? " with " + num(C.plates.collarKgEach) + " kg collars." : ", no collar weight counted.");
+  }
+
+  // ---------- 1. picker + boot ----------
+  function renderAll() { renderHeader(); renderFlags(); renderTrends(); renderTMs(); renderAttempts(); renderWarmups(); renderWeek(); }
+
+  var picker = $("picker");
+  picker.innerHTML = ATHLETES.map(function (a) { return '<option value="' + esc(a.id) + '">' + esc(a.name) + '</option>'; }).join("");
+  picker.addEventListener("change", function () { setAthlete(picker.value); });
+  var last = load("last");
+  setAthlete(last);
+  picker.value = athlete.id;
+})();
+</script>
+</body>
+</html>
